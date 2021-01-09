@@ -1,0 +1,28 @@
+<%= form_with model: bookmark do |form| %>
+	<p>
+		<%= form.label :title, Bookmark.human_attribute_name(:title) + ":" %><br>
+		<%= form.text_field :title %><br>
+		<ul><% bookmark.errors.full_messages_for(:title).each do |message| %>
+			<li class="error"><%= message %></li>
+		<% end %></ul>
+	</p>
+
+	<p>
+		<%= form.label :uri, Bookmark.human_attribute_name(:uri) + ":" %><br>
+		<%= form.text_field :uri %><br>
+		<ul><% bookmark.errors.full_messages_for(:uri).each do |message| %>
+			<li class="error"><%= message %></li>
+		<% end %></ul>
+	</p>
+
+	<p>
+		<%= form.submit %>
+	</p>
+<% end %>
+<p>
+	<%= button_to "Cancel", root_path, method: :get %>
+</p>
+<% if edit %><p>
+	<%= button_to "Delete", bookmark_path(bookmark), method: :delete %>
+</p><% end %>
+
