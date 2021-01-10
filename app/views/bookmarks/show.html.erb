@@ -7,7 +7,12 @@
 
 <dl>
 	<dt><%= Bookmark.human_attribute_name(:uri) %></dt>
-	<dd><%= @bookmark.uri %></dd>
+	<dd><%= link_to @bookmark.uri, @bookmark.uri %></dd>
+</dl>
+
+<dl>
+	<dt><%= Bookmark.human_attribute_name(:tags) %></dt>
+	<dd><%= @bookmark.tags_string %></dd>
 </dl>
 
 <ul class="menu">

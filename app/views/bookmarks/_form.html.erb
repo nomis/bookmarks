@@ -20,6 +20,11 @@
 		<%= form.text_field :uri %>
 	</p>
 
+	<p class="field">
+		<%= form.label :tags_string, Bookmark.human_attribute_name(:tags) + ":" %>
+		<%= form.text_field :tags_string %>
+	</p>
+
 	<p class="actions">
 		<%= form.submit %>
 	</p>

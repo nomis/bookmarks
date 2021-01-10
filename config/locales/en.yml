@@ -34,3 +34,4 @@ en:
     attributes:
       bookmark:
         uri: "URI"
+        tags_string: "Tag"
