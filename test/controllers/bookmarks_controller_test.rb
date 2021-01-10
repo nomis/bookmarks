@@ -43,6 +43,6 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
       delete bookmark_url(@bookmark)
     end
 
-    assert_redirected_to bookmarks_url
+    assert_redirected_to root_url
   end
 end
