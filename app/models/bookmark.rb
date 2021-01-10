@@ -8,24 +8,24 @@ class Bookmark < ApplicationRecord
   before_save :save_tags_string
 
   def tags_string
-    (@tags_string ? @tags_string.values : tags).map{ |tag| tag.name }.sort.join(" ")
+    (@new_tags ? @new_tags.values : tags).map{ |tag| tag.name }.sort.join(" ")
   end
 
   def tags_string=(tags_string)
-    @tags_string = tags_string.split.map{ |name| Tag.new(name: name) }.map{ |tag| [tag.key, tag] }.to_h
+    @new_tags = tags_string.split.map{ |name| Tag.new(name: name) }.map{ |tag| [tag.key, tag] }.to_h
   end
 
   private
     MAX_TAGS = 100
 
     def validate_tags_string
-      if @tags_string then
-        if @tags_string.size > MAX_TAGS then
+      if @new_tags then
+        if @new_tags.size > MAX_TAGS then
           errors.add(:tags_string, "limit reached (maximum is " \
             + ActionController::Base.helpers.pluralize(MAX_TAGS, "tag") + ")")
         end
 
-        @tags_string.values.each do |tag|
+        @new_tags.values.each do |tag|
           if not tag.valid?
             tag.errors.messages.values.flatten.each do |message|
               errors.add(:tags_string, '"' + tag.name + '" ' + message)
@@ -36,18 +36,16 @@ class Bookmark < ApplicationRecord
     end
 
     def save_tags_string
-      return if @tags_string.nil?
-
-      new_tags = @tags_string
+      return if @new_tags.nil?
 
       with_lock do
         old_keys = tags.map{ |tag| tag.key }
 
         # Add new tags but don't update the case of the tag name
-        (new_tags.keys - old_keys).each do |new_key|
+        (@new_tags.keys - old_keys).each do |new_key|
           new_tag = Tag.find_by(key: new_key)
           if new_tag.nil? then
-            new_tag = new_tags[new_key]
+            new_tag = @new_tags[new_key]
           end
           tags << new_tag
         end
@@ -55,10 +53,10 @@ class Bookmark < ApplicationRecord
         removed_tags = []
 
         tags.each do |old_tag|
-          if new_tags.include? old_tag.key
+          if @new_tags.include? old_tag.key
             # Update case for the names of existing tags
-            if old_tag.name != new_tags[old_tag.key].name then
-              old_tag.name = new_tags[old_tag.key].name
+            if old_tag.name != @new_tags[old_tag.key].name then
+              old_tag.name = @new_tags[old_tag.key].name
               old_tag.save!
             end
           else
@@ -73,5 +71,7 @@ class Bookmark < ApplicationRecord
           Tag.delete(Tag.where.missing(:bookmarks).where(id: removed_tags))
         end
       end
+
+      @new_tags = nil
     end
 end
