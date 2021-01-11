@@ -5,7 +5,8 @@ class Bookmark < ApplicationRecord
   validates :uri, presence: true, length: { maximum: 4096 }
   validate :validate_tags_string
 
-  before_save :save_tags_string
+  after_save :save_tags_string
+  before_destroy :remove_all_tags
 
   def tags_string
     (@new_tags ? @new_tags.values : tags).map{ |tag| tag.name }.sort.join(" ")
@@ -38,40 +39,51 @@ class Bookmark < ApplicationRecord
     def save_tags_string
       return if @new_tags.nil?
 
-      with_lock do
-        old_keys = tags.map{ |tag| tag.key }
+      old_keys = tags.map{ |tag| tag.key }
 
-        # Add new tags but don't update the case of the tag name
-        (@new_tags.keys - old_keys).each do |new_key|
-          new_tag = Tag.find_by(key: new_key)
-          if new_tag.nil? then
-            new_tag = @new_tags[new_key]
-          end
-          tags << new_tag
+      # Add new tags but don't update the case of the tag name
+      (@new_tags.keys - old_keys).each do |new_key|
+        # Concurrency issue: the same tag may be created in another thread
+        # (there is no way to resolve this here because we'd need a second
+        # independent transaction and that could leave unreferenced tags if an
+        # error occurs)
+        new_tag = Tag.find_by(key: new_key)
+        if new_tag.nil? then
+          new_tag = @new_tags[new_key]
         end
+        tags << new_tag
+      end
 
-        removed_tags = []
+      removed_tags = []
 
-        tags.each do |old_tag|
-          if @new_tags.include? old_tag.key
-            # Update case for the names of existing tags
-            if old_tag.name != @new_tags[old_tag.key].name then
-              old_tag.name = @new_tags[old_tag.key].name
-              old_tag.save!
-            end
-          else
-            # Delete removed tags
-            removed_tags << old_tag.id
-            tags.delete(old_tag)
+      tags.each do |old_tag|
+        if @new_tags.include? old_tag.key
+          # Update case for the names of existing tags
+          if old_tag.name != @new_tags[old_tag.key].name then
+            old_tag.name = @new_tags[old_tag.key].name
+            old_tag.save!
           end
-        end
-
-        # Delete tags that now have no bookmarks
-        if not removed_tags.empty? then
-          Tag.delete(Tag.where.missing(:bookmarks).where(id: removed_tags))
+        else
+          # Delete removed tags
+          removed_tags << old_tag.id
+          tags.delete(old_tag)
         end
       end
 
+      # Delete tags that now have no bookmarks
+      if not removed_tags.empty? then
+        # Potential concurrency issue: the tag may be reused in another thread
+        # (databases may handle conflicts with this DELETE in different ways
+        # so it could silently ignore newly referenced tags or raise an error
+        # on the foreign key constraint)
+        Tag.where.missing(:bookmarks).where(id: removed_tags).delete_all
+      end
+
       @new_tags = nil
+    end
+
+    def remove_all_tags
+      @new_tags = {}
+      save_tags_string
     end
 end

@@ -4,6 +4,10 @@ class Tag < ApplicationRecord
   validates :name, presence: true, length: { maximum: 255 }, format: { with: /\A[A-Za-z0-9_+&.-]+\z/ }
   validate :name_consistent
 
+  # Not validating key uniqueness here because an unsaved tag needs to be valid
+  # even if it already exists so that Bookmark.validate_tags_string can validate
+  # tag names
+
   def key
     self[:key]
   end

@@ -27,12 +27,15 @@ class BookmarksController < ApplicationController
     @bookmark = Bookmark.new(bookmark_params)
 
     respond_to do |format|
-      if @bookmark.save
-        format.html { redirect_to @bookmark, notice: 'Bookmark was successfully created.' }
-        format.json { render :show, status: :created, location: @bookmark }
-      else
-        format.html { render :new }
-        format.json { render json: @bookmark.errors, status: :unprocessable_entity }
+      # Tag manipulation cannot not be done concurrently in a safe way
+      @bookmark.with_advisory_lock("bookmark") do
+        if @bookmark.save
+          format.html { redirect_to @bookmark, notice: 'Bookmark was successfully created.' }
+          format.json { render :show, status: :created, location: @bookmark }
+        else
+          format.html { render :new }
+          format.json { render json: @bookmark.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -41,12 +44,15 @@ class BookmarksController < ApplicationController
   # PATCH/PUT /bookmarks/1.json
   def update
     respond_to do |format|
-      if @bookmark.update(bookmark_params)
-        format.html { redirect_to @bookmark, notice: 'Bookmark was successfully updated.' }
-        format.json { render :show, status: :ok, location: @bookmark }
-      else
-        format.html { render :edit }
-        format.json { render json: @bookmark.errors, status: :unprocessable_entity }
+      # Tag manipulation cannot not be done concurrently in a safe way
+      @bookmark.with_advisory_lock("bookmark") do
+        if @bookmark.update(bookmark_params)
+          format.html { redirect_to @bookmark, notice: 'Bookmark was successfully updated.' }
+          format.json { render :show, status: :ok, location: @bookmark }
+        else
+          format.html { render :edit }
+          format.json { render json: @bookmark.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -54,7 +60,10 @@ class BookmarksController < ApplicationController
   # DELETE /bookmarks/1
   # DELETE /bookmarks/1.json
   def destroy
-    @bookmark.destroy
+    # Tag manipulation cannot not be done concurrently in a safe way
+    @bookmark.with_advisory_lock("bookmark") do
+      @bookmark.destroy
+    end
     respond_to do |format|
       format.html { redirect_to root_path, notice: 'Bookmark was successfully destroyed.' }
       format.json { head :no_content }
