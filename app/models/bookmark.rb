@@ -72,6 +72,10 @@ class Bookmark < ApplicationRecord
 
       # Delete tags that now have no bookmarks
       if not removed_tags.empty? then
+        # Concurrency issue: the last two users of the tag may remove it in
+        # two separate threads but neither of them can identify this within
+        # their own transaction, leaving the tag unreferenced
+        #
         # Potential concurrency issue: the tag may be reused in another thread
         # (databases may handle conflicts with this DELETE in different ways
         # so it could silently ignore newly referenced tags or raise an error
