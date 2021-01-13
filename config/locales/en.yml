@@ -34,4 +34,5 @@ en:
     attributes:
       bookmark:
         uri: "URI"
+        # This is used as the display name for errors because the singular tag name will follow
         tags_string: "Tag"

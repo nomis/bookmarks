@@ -21,6 +21,8 @@
 	</p>
 
 	<p class="field">
+		<%# :tags is used for the label text because it's plural %>
+		<%# but :tags_string is singular (for error messages) %>
 		<%= form.label :tags_string, Bookmark.human_attribute_name(:tags) + ":" %>
 		<%= form.text_field :tags_string %>
 	</p>

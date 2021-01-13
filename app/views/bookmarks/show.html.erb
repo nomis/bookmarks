@@ -1,18 +1,14 @@
 <p id="notice"><%= notice %></p>
 
-<dl>
-	<dt><%= Bookmark.human_attribute_name(:title) %></dt>
-	<dd><%= @bookmark.title %></dd>
-</dl>
-
-<dl>
-	<dt><%= Bookmark.human_attribute_name(:uri) %></dt>
-	<dd><%= link_to @bookmark.uri, @bookmark.uri %></dd>
-</dl>
-
-<dl>
-	<dt><%= Bookmark.human_attribute_name(:tags) %></dt>
-	<dd><%= @bookmark.tags_string %></dd>
+<dl class="bookmark">
+	<dt class="title"><%= Bookmark.human_attribute_name(:title) %></dt>
+	<dd class="title"><%= @bookmark.title %></dd>
+	<dt class="uri"><%= Bookmark.human_attribute_name(:uri) %></dt>
+	<dd class="uri"><%= link_to @bookmark.uri, @bookmark.uri %></dd>
+	<%# :tags is used for the label text because it's plural %>
+	<%# but :tags_string is singular (for error messages) %>
+	<dt class="tags"><%= Bookmark.human_attribute_name(:tags) %></dt>
+	<dd class="tags"><%= @bookmark.tags_string %></dd>
 </dl>
 
 <ul class="menu">
