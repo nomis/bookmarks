@@ -1,3 +1,5 @@
+<%- content_for :title, "Edit #" + @bookmark.id.to_s -%>
+<%- content_for :robots, "noindex" -%>
 <h1>Editing Bookmark</h1>
 <%= render 'form', bookmark: @bookmark %>
 <ul class="menu">
