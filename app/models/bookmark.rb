@@ -39,21 +39,6 @@ class Bookmark < ApplicationRecord
     def save_tags_string
       return if @new_tags.nil?
 
-      old_keys = tags.map{ |tag| tag.key }
-
-      # Add new tags but don't update the case of the tag name
-      (@new_tags.keys - old_keys).each do |new_key|
-        # Concurrency issue: the same tag may be created in another thread
-        # (there is no way to resolve this here because we'd need a second
-        # independent transaction and that could leave unreferenced tags if an
-        # error occurs)
-        new_tag = Tag.find_by(key: new_key)
-        if new_tag.nil? then
-          new_tag = @new_tags[new_key]
-        end
-        tags << new_tag
-      end
-
       removed_tags = []
 
       tags.each do |old_tag|
@@ -68,6 +53,20 @@ class Bookmark < ApplicationRecord
           removed_tags << old_tag.id
           tags.delete(old_tag)
         end
+      end
+
+      # Add new tags but don't update the case of the tag name
+      old_keys = tags.map{ |tag| tag.key }
+      (@new_tags.keys - old_keys).each do |new_key|
+        # Concurrency issue: the same tag may be created in another thread
+        # (there is no way to resolve this here because we'd need a second
+        # independent transaction and that could leave unreferenced tags if an
+        # error occurs)
+        new_tag = Tag.find_by(key: new_key)
+        if new_tag.nil? then
+          new_tag = @new_tags[new_key]
+        end
+        tags << new_tag
       end
 
       # Delete tags that now have no bookmarks
