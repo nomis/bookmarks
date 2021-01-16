@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
   root "bookmarks#index"
-  resources :bookmarks
+  resources :bookmarks, constraints: { format: ["html", "json"] }
 end
