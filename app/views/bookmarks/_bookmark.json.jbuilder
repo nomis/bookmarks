@@ -1,2 +1,5 @@
-json.extract! bookmark, :id, :title, :uri, :tags_string, :created_at, :updated_at
-json.url bookmark_url(bookmark, format: :json)
+json.extract! bookmark, :id, :title, :uri
+json.tags bookmark.tags do |tag|
+  json.extract! tag, :id, :name, :created_at, :updated_at
+end
+json.extract! bookmark, :created_at, :updated_at
