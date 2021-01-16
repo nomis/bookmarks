@@ -9,11 +9,11 @@ class Bookmark < ApplicationRecord
   before_destroy :remove_all_tags
 
   def tags_string
-    (@new_tags ? @new_tags.values : tags).map{ |tag| tag.name }.sort.join(" ")
+    (@new_tags ? @new_tags.values : tags).map { |tag| tag.name }.sort.join(" ")
   end
 
   def tags_string=(tags_string)
-    @new_tags = tags_string.split.map{ |name| Tag.new(name: name) }.map{ |tag| [tag.key, tag] }.to_h
+    @new_tags = tags_string.split.map { |name| Tag.new(name: name) }.map { |tag| [tag.key, tag] }.to_h
   end
 
   private
@@ -56,7 +56,7 @@ class Bookmark < ApplicationRecord
       end
 
       # Add new tags but don't update the case of the tag name
-      old_keys = tags.map{ |tag| tag.key }
+      old_keys = tags.map { |tag| tag.key }
       (@new_tags.keys - old_keys).each do |new_key|
         # Concurrency issue: the same tag may be created in another thread
         # (there is no way to resolve this here because we'd need a second
