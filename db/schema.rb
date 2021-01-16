@@ -10,22 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_10_145610) do
+ActiveRecord::Schema.define(version: 2021_01_16_152020) do
+
+  create_table "bookmark_tags", id: false, force: :cascade do |t|
+    t.integer "bookmark_id", null: false
+    t.integer "tag_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bookmark_id"], name: "index_bookmark_tags_on_bookmark_id"
+    t.index ["tag_id"], name: "index_bookmark_tags_on_tag_id"
+  end
 
   create_table "bookmarks", force: :cascade do |t|
     t.string "title", null: false
     t.text "uri", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "bookmarks_tags", id: false, force: :cascade do |t|
-    t.integer "bookmark_id", null: false
-    t.integer "tag_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["bookmark_id"], name: "index_bookmarks_tags_on_bookmark_id"
-    t.index ["tag_id"], name: "index_bookmarks_tags_on_tag_id"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -36,6 +36,6 @@ ActiveRecord::Schema.define(version: 2021_01_10_145610) do
     t.index ["key"], name: "index_tags_on_key", unique: true
   end
 
-  add_foreign_key "bookmarks_tags", "bookmarks"
-  add_foreign_key "bookmarks_tags", "tags"
+  add_foreign_key "bookmark_tags", "bookmarks"
+  add_foreign_key "bookmark_tags", "tags"
 end

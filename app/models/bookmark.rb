@@ -1,5 +1,5 @@
 class Bookmark < ApplicationRecord
-  has_and_belongs_to_many :tags
+  has_and_belongs_to_many :tags, join_table: :bookmark_tags
 
   validates :title, presence: true, length: { maximum: 255 }
   validates :uri, presence: true, length: { maximum: 4096 }
