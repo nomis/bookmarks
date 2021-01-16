@@ -9,7 +9,7 @@ class Bookmark < ApplicationRecord
   before_destroy :remove_all_tags
 
   def tags_string
-    (@new_tags ? @new_tags.values : tags).map { |tag| tag.name }.sort.join(" ")
+    (@new_tags ? @new_tags.values : tags).map { |tag| tag.name }.sort_by { |name| name.downcase }.join(" ")
   end
 
   def tags_string=(tags_string)
