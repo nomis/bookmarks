@@ -1,4 +1,6 @@
 class Bookmark < ApplicationRecord
+  MAX_TAGS = 100
+
   has_and_belongs_to_many :tags, join_table: :bookmark_tags
 
   validates :title, presence: true, length: { maximum: 255 }
@@ -16,9 +18,11 @@ class Bookmark < ApplicationRecord
     @new_tags = tags_string.split.map { |name| Tag.new(name: name) }.map { |tag| [tag.key, tag] }.to_h
   end
 
-  private
-    MAX_TAGS = 100
+  def self.with_tags(tags)
+    tags.reduce(Bookmark) { |query, tag| query.where(id: BookmarkTag.select(:bookmark_id).where(tag_id: tag)) }
+  end
 
+  private
     def validate_tags_string
       if @new_tags then
         if @new_tags.size > MAX_TAGS then

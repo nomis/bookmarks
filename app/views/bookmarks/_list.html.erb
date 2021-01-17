@@ -1,0 +1,67 @@
+<p><%= link_to "New", new_bookmark_path, rel: "nofollow" %></p>
+<% if not tags.empty? %>
+<h2>Tags</h2>
+<p class="alt_text">Tags:</p>
+<ul class="tags">
+	<% tags.each do |tag, count|
+		if matching.include? tag.id then
+			search_tags = matching ^ [tag.id]
+			%><li class="matching">
+			<strong><%
+		else
+			search_tags = matching | [tag.id]
+			%><li><%
+		end
+
+		if search_tags.empty?
+			search_href = root_path
+			search_title = "All bookmarks"
+		else
+			search_href = search_by_tags_path(tags: search_tags.sort(&NaturalSort).join(","))
+			search_tags_names = tags.keys.select { |tag| search_tags.include? tag.id }.map { |tag| tag.name }
+			if matching.empty?
+				search_title = 'Search by tag "' + tag.name + '"'
+			elsif matching.include? tag.id
+				search_title = 'Remove tag "' + tag.name + '" from search'
+			else
+				search_title = 'Add tag "' + tag.name + '" to search'
+			end
+		end
+		%>
+			<%= link_to tag.name, search_href, title: search_title, rel: "nofollow" %>
+			<% if matching.include? tag.id %></strong><% end %>
+			<span class="count"><span class="alt_text">(</span><%= count %><span class="alt_text">)</span></span>
+		</li>
+	<% end %>
+</ul>
+<% end %>
+<h2>Bookmarks</h2>
+<ol class="bookmarks">
+	<% bookmarks.each do |bookmark| %>
+	<li>
+		<%= link_to bookmark.title, bookmark.uri %><%
+			uri = URI.parse(bookmark.uri)
+			if uri.host
+				%> (<%= uri.host %>)<%
+			end
+		%>
+		<dl>
+			<dt><span class="alt_text"><%= Bookmark.human_attribute_name(:tags) %>:</span></dt>
+			<dd>
+				<ul class="item_tags">
+					<% bookmark.tags.sort_by(&:name).each do |tag| %>
+					<li><%= tag.name %></li>
+					<% end %>
+				</ul>
+			</dd>
+			<dt><span class="alt_text">Actions:</span></dt>
+			<dd>
+				<ul class="item_menu">
+					<li><%= link_to "Edit", edit_bookmark_path(bookmark), rel: "nofollow" %></li>
+					<li><%= link_to "Delete", bookmark_path(bookmark), method: :delete, data: { confirm: 'Are you sure?' } %></li>
+				</ul>
+			</dd>
+		</dl>
+	</li>
+	<% end %>
+</ol>

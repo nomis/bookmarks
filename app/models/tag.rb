@@ -17,8 +17,16 @@ class Tag < ApplicationRecord
     self[:key] = name&.downcase
   end
 
+  def count
+    self[:count]
+  end
+
   def self.make_key(name)
     return name.downcase
+  end
+
+  def self.with_count(*others)
+    others.reduce(BookmarkTag.joins(:tag)) { |query, other| query.merge(other) }.group(:tag).count
   end
 
   private

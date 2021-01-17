@@ -56,3 +56,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'with_advisory_lock', '~> 4.6.0'
+gem 'natural_sort', '~> 0.3.0'

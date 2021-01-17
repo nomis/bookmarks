@@ -1,25 +1,2 @@
-<h1>Bookmarks</h1>
-<p><%= link_to "New", new_bookmark_path, rel: "nofollow" %></p>
-<dl class="bookmarks">
-	<%- @bookmarks.each do |bookmark| -%>
-	<dt>
-		<%= link_to bookmark.title, bookmark.uri %><%
-			uri = URI.parse(bookmark.uri)
-			if uri.host
-				%> (<%= uri.host %>)<%
-			end
-		%>
-	</dt>
-	<dd>
-		<ul class="item_tags">
-			<% bookmark.tags.sort_by(&:name).each do |tag| -%>
-			<li><%= tag.name %></li>
-			<%- end %>
-		</ul>
-		<ul class="item_menu">
-			<li><%= link_to "Edit", edit_bookmark_path(bookmark), rel: "nofollow" %></li>
-			<li><%= link_to "Delete", bookmark_path(bookmark), method: :delete, data: { confirm: 'Are you sure?' } %></li>
-		</ul>
-	</dd>
-	<%- end %>
-</dl>
+<h1>All bookmarks</h1>
+<%= render 'list', bookmarks: @bookmarks, tags: @tags, matching: @matching %>
