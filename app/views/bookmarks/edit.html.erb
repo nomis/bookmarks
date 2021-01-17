@@ -1,5 +1,5 @@
-<%- content_for :title, "Edit #" + @bookmark.id.to_s -%>
-<%- content_for :robots, "noindex" -%>
+<% content_for :title, "Edit #" + @bookmark.id.to_s %>
+<% content_for :robots, "noindex" %>
 <h1>Editing Bookmark</h1>
 <%= render 'form', bookmark: @bookmark %>
 <ul class="menu">
@@ -7,4 +7,3 @@
 	<li><%= link_to "Back", bookmark_path(@bookmark), rel: "nofollow" %></li>
 	<li><%= link_to "Delete", bookmark_path(@bookmark), method: :delete, data: { confirm: 'Are you sure?' } %></li>
 </ul>
-
