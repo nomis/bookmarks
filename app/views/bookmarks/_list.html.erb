@@ -1,34 +1,16 @@
 <p><%= link_to "New", new_bookmark_path, rel: "nofollow" %></p>
 <% if not tags.empty? %>
 <h2>Tags</h2>
-<p class="alt_text">Tags:</p>
 <ul class="tags">
 	<% tags.each do |tag, count|
 		if matching.include? tag.id then
-			search_tags = matching ^ [tag.id]
 			%><li class="matching">
 			<strong><%
 		else
-			search_tags = matching | [tag.id]
 			%><li><%
 		end
-
-		if search_tags.empty?
-			search_href = root_path
-			search_title = "All bookmarks"
-		else
-			search_href = search_by_tags_path(tags: search_tags.sort(&NaturalSort).join(","))
-			search_tags_names = tags.keys.select { |tag| search_tags.include? tag.id }.map { |tag| tag.name }
-			if matching.empty?
-				search_title = 'Search by tag "' + tag.name + '"'
-			elsif matching.include? tag.id
-				search_title = 'Remove tag "' + tag.name + '" from search'
-			else
-				search_title = 'Add tag "' + tag.name + '" to search'
-			end
-		end
 		%>
-			<%= link_to tag.name, search_href, title: search_title, rel: "nofollow" %>
+			<%= link_to_search_by_tags(tag, matching) %>
 			<% if matching.include? tag.id %></strong><% end %>
 			<span class="count"><span class="alt_text">(</span><%= count %><span class="alt_text">)</span></span>
 		</li>
@@ -50,7 +32,9 @@
 			<dd>
 				<ul class="item_tags">
 					<% bookmark.tags.sort_by(&:name).each do |tag| %>
-					<li><%= tag.name %></li>
+						<% if matching.include?(tag.id) %><strong><% end %>
+						<li><%= link_to_search_by_tags(tag, matching) %></li>
+						<% if matching.include?(tag.id) %></strong><% end %>
 					<% end %>
 				</ul>
 			</dd>
