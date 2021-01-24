@@ -22,21 +22,24 @@ class Tag < ApplicationRecord
   end
 
   def self.make_key(name)
-    return name.downcase
+    name.downcase
   end
 
   def self.with_count(*others)
-    others.reduce(BookmarkTag.joins(:tag)) { |query, other| query.merge(other) }.group(:tag).count
+    others.inject(BookmarkTag.joins(:tag)) do |query, other|
+      query.merge(other)
+    end.group(:tag).count
   end
 
   private
-    def key=(key)
-      self[:key] = key
-    end
 
-    def name_consistent
-      unless key == name&.downcase
-        errors.add(:base, "Key must be the lowercase version of name")
-      end
-    end
+  def key=(key)
+    self[:key] = key
+  end
+
+  def name_consistent
+    return if key == name&.downcase
+
+    errors.add(:base, "Key must be the lowercase version of name")
+  end
 end

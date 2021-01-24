@@ -1,0 +1,15 @@
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+
+# Arbitrary rule; "Apply this rule only to arrays with two or more elements."
+Style/SymbolArray:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

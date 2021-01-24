@@ -5,15 +5,14 @@ class BookmarksController < ApplicationController
   # GET /bookmarks.json
   def index
     @tags = Tag.with_count(Tag.order(:key))
-    # TODO This shouldn't need to fetch the tags, because they have already been fetched above
+    # TODO: This shouldn't need to fetch the tags, because they have already been fetched above
     @bookmarks = Bookmark.all.order(created_at: :desc).order(:id).includes(:tags)
     @matching = Set.new
   end
 
   # GET /bookmarks/1
   # GET /bookmarks/1.json
-  def show
-  end
+  def show; end
 
   # GET /bookmarks/new
   def new
@@ -21,8 +20,7 @@ class BookmarksController < ApplicationController
   end
 
   # GET /bookmarks/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /bookmarks
   # POST /bookmarks.json
@@ -33,7 +31,7 @@ class BookmarksController < ApplicationController
       # Tag manipulation cannot not be done concurrently in a safe way
       @bookmark.with_advisory_lock("bookmark") do
         if @bookmark.save
-          format.html { redirect_to @bookmark, notice: 'Bookmark was successfully created.' }
+          format.html { redirect_to @bookmark, notice: "Bookmark was successfully created." }
           format.json { render :show, status: :created, location: @bookmark }
         else
           format.html { render :new }
@@ -50,7 +48,7 @@ class BookmarksController < ApplicationController
       # Tag manipulation cannot not be done concurrently in a safe way
       @bookmark.with_advisory_lock("bookmark") do
         if @bookmark.update(bookmark_params)
-          format.html { redirect_to @bookmark, notice: 'Bookmark was successfully updated.' }
+          format.html { redirect_to @bookmark, notice: "Bookmark was successfully updated." }
           format.json { render :show, status: :ok, location: @bookmark }
         else
           format.html { render :edit }
@@ -68,7 +66,7 @@ class BookmarksController < ApplicationController
       @bookmark.destroy
     end
     respond_to do |format|
-      format.html { redirect_to root_path, notice: 'Bookmark was successfully destroyed.' }
+      format.html { redirect_to root_path, notice: "Bookmark was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -78,13 +76,13 @@ class BookmarksController < ApplicationController
   def search
     filter_tags = Set.new(params[:tags].split(",").map { |tag| Integer(tag) })
 
-    if filter_tags.size > Bookmark::MAX_TAGS then
-       raise Bookmark.human_attribute_name(:tags_string) + " limit reached (maximum is " \
+    if filter_tags.size > Bookmark::MAX_TAGS
+      raise Bookmark.human_attribute_name(:tags_string) + " limit reached (maximum is " \
             + ActionController::Base.helpers.pluralize(Bookmark::MAX_TAGS, "tag") + ")"
     end
 
     canonical_filter_tags = filter_tags.sort(&NaturalSort).join(",")
-    if params[:tags] != canonical_filter_tags then
+    if params[:tags] != canonical_filter_tags
       respond_to do |format|
         format.html { redirect_to url_for(tags: canonical_filter_tags) }
         format.json { redirect_to url_for(tags: canonical_filter_tags, format: "json") }
@@ -93,19 +91,20 @@ class BookmarksController < ApplicationController
     end
 
     @tags = Tag.with_count(BookmarkTag.for_bookmarks_with_tags(filter_tags), Tag.order(:key))
-    # TODO This shouldn't need to fetch the tags, because they have already been fetched above
+    # TODO: This shouldn't need to fetch the tags, because they have already been fetched above
     @bookmarks = Bookmark.with_tags(filter_tags).order(created_at: :desc).order(:id).preload(:tags)
     @matching = filter_tags
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_bookmark
-      @bookmark = Bookmark.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def bookmark_params
-      params.require(:bookmark).permit(:title, :uri, :tags_string)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_bookmark
+    @bookmark = Bookmark.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def bookmark_params
+    params.require(:bookmark).permit(:title, :uri, :tags_string)
+  end
 end

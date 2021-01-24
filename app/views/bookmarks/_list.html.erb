@@ -1,9 +1,9 @@
 <p><%= link_to "New", new_bookmark_path, rel: "nofollow" %></p>
-<% if not tags.empty? %>
+<% unless tags.empty? %>
 <h2>Tags</h2>
 <ul class="tags">
 	<% tags.each do |tag, count|
-		if matching.include? tag.id then
+		if matching.include?(tag.id) then
 			%><li class="matching">
 			<strong><%
 		else
@@ -11,7 +11,7 @@
 		end
 		%>
 			<%= link_to_search_by_tags(tag, matching) %>
-			<% if matching.include? tag.id %></strong><% end %>
+			<% if matching.include?(tag.id) %></strong><% end %>
 			<span class="count"><span class="alt_text">(</span><%= count %><span class="alt_text">)</span></span>
 		</li>
 	<% end %>

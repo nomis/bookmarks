@@ -22,7 +22,12 @@ module BookmarkHelper
         end
     end
 
-    link_to tag.name, search_href, title: search_title, rel: "nofollow",
+    link_to(
+      tag.name,
+      search_href,
+      title: search_title,
+      rel: "nofollow",
       style: matching.include?(tag.id) ? "search_remove" : "search_add"
+    )
   end
 end

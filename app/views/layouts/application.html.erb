@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Bookmarks<%= (": " + yield(:title) unless yield(:title).blank?).to_s %></title>
-		<% if not yield(:robots).blank? then %>
+		<% unless yield(:robots).blank? then %>
 		<meta name="robots" content="<%= yield(:robots) %>">
 		<% end %>
 		<meta name="viewport" content="width=device-width,initial-scale=1">

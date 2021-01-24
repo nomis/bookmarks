@@ -1,6 +1,6 @@
 <%
 content_for :robots, "noindex"
-search_tags = @tags.keys.select { |tag| @matching.include? tag.id }.map { |tag| tag.name }
+search_tags = @tags.keys.select { |tag| @matching.include?(tag.id) }.map { |tag| tag.name }
 content_for :title, "Search by " + (search_tags.size == 1 ? "tag" : "tags") + ": " + search_tags.join(", ")
 %>
 <h1>Search bookmarks</h1>
