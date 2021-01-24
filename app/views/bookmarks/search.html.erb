@@ -1,4 +1,7 @@
 <%
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 content_for :robots, "noindex"
 content_for :title, "Search by " + (@list.search_tags.size == 1 ? "tag" : "tags") + ": " + @list.search_tags.join(", ")
 %>

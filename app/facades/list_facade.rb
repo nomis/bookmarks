@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 class ListFacade
   def initialize(bookmarks = Bookmark.all, tags = Tag.all, search_tags = Set.new)
     @tags = Tag.with_count(tags, Tag.order(:key))

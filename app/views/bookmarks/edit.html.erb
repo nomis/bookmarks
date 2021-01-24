@@ -1,5 +1,10 @@
-<% content_for :title, "Edit #" + @bookmark.id.to_s %>
-<% content_for :robots, "noindex" %>
+<%
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+content_for :title, "Edit #" + @bookmark.id.to_s
+content_for :robots, "noindex"
+%>
 <h1>Editing Bookmark</h1>
 <%= render 'form', bookmark: @bookmark %>
 <ul class="menu">

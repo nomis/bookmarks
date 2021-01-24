@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 class CreateBookmarkTags < ActiveRecord::Migration[6.1]
   def change
     create_table "bookmarks_tags", id: false do |t|

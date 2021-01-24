@@ -1,5 +1,10 @@
-<% content_for :title, "#" + @bookmark.id.to_s %>
-<% content_for :robots, "noindex" %>
+<%
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+content_for :title, "#" + @bookmark.id.to_s
+content_for :robots, "noindex"
+%>
 <p id="notice"><%= notice %></p>
 
 <dl class="bookmark">
