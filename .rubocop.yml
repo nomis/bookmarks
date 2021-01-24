@@ -13,3 +13,6 @@ Style/SymbolArray:
 
 Style/Documentation:
   Enabled: false
+
+Rails/HasAndBelongsToMany:
+  Enabled: false

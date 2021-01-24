@@ -34,9 +34,7 @@ class Bookmark < ApplicationRecord
         + ActionController::Base.helpers.pluralize(MAX_TAGS, "tag") + ")")
     end
 
-    @new_tags.each_value do |tag|
-      next if tag.valid?
-
+    @new_tags.values.reject(&:valid?).each do |tag|
       tag.errors.messages.values.flatten.each do |message|
         errors.add(:tags_string, "\"#{tag.name}\" #{message}")
       end
@@ -44,7 +42,7 @@ class Bookmark < ApplicationRecord
   end
 
   def save_tags_string
-    return if @new_tags.nil?
+    return unless @new_tags
 
     removed_tags = []
 

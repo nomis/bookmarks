@@ -1,25 +1,25 @@
 <p><%= link_to "New", new_bookmark_path, rel: "nofollow" %></p>
-<% unless tags.empty? %>
+<% unless list.tags.empty? %>
 <h2>Tags</h2>
 <ul class="tags">
-	<% tags.each do |tag, count|
-		if matching.include?(tag.id) then
+	<% list.tags.each do |tag|
+		if tag.search_match? then
 			%><li class="matching">
 			<strong><%
 		else
 			%><li><%
 		end
 		%>
-			<%= link_to_search_by_tags(tag, matching) %>
-			<% if matching.include?(tag.id) %></strong><% end %>
-			<span class="count"><span class="alt_text">(</span><%= count %><span class="alt_text">)</span></span>
+			<%= link_to_search_by_tags(tag) %>
+			<% if tag.search_match? %></strong><% end %>
+			<span class="count"><span class="alt_text">(</span><%= tag.count %><span class="alt_text">)</span></span>
 		</li>
 	<% end %>
 </ul>
 <% end %>
 <h2>Bookmarks</h2>
 <ol class="bookmarks">
-	<% bookmarks.each do |bookmark| %>
+	<% list.bookmarks.each do |bookmark| %>
 	<li>
 		<%= link_to bookmark.title, bookmark.uri %><%
 			uri = URI.parse(bookmark.uri)
@@ -31,10 +31,10 @@
 			<dt><span class="alt_text"><%= Bookmark.human_attribute_name(:tags) %>:</span></dt>
 			<dd>
 				<ul class="item_tags">
-					<% bookmark.tags.sort_by(&:name).each do |tag| %>
-						<% if matching.include?(tag.id) %><strong><% end %>
-						<li><%= link_to_search_by_tags(tag, matching) %></li>
-						<% if matching.include?(tag.id) %></strong><% end %>
+					<% bookmark.tags.each do |tag| %>
+						<% if tag.search_match? %><strong><% end %>
+						<li><%= link_to_search_by_tags(tag) %></li>
+						<% if tag.search_match? %></strong><% end %>
 					<% end %>
 				</ul>
 			</dd>

@@ -4,10 +4,7 @@ class BookmarksController < ApplicationController
   # GET /bookmarks
   # GET /bookmarks.json
   def index
-    @tags = Tag.with_count(Tag.order(:key))
-    # TODO: This shouldn't need to fetch the tags, because they have already been fetched above
-    @bookmarks = Bookmark.all.order(created_at: :desc).order(:id).includes(:tags)
-    @matching = Set.new
+    @list = ListFacade.new
   end
 
   # GET /bookmarks/1
@@ -76,24 +73,14 @@ class BookmarksController < ApplicationController
   def search
     filter_tags = Set.new(params[:tags].split(",").map { |tag| Integer(tag) })
 
-    if filter_tags.size > Bookmark::MAX_TAGS
-      raise Bookmark.human_attribute_name(:tags_string) + " limit reached (maximum is " \
-            + ActionController::Base.helpers.pluralize(Bookmark::MAX_TAGS, "tag") + ")"
-    end
+    validate_search(filter_tags)
+    return unless canonical_search(filter_tags)
 
-    canonical_filter_tags = filter_tags.sort(&NaturalSort).join(",")
-    if params[:tags] != canonical_filter_tags
-      respond_to do |format|
-        format.html { redirect_to url_for(tags: canonical_filter_tags) }
-        format.json { redirect_to url_for(tags: canonical_filter_tags, format: "json") }
-      end
-      return
-    end
-
-    @tags = Tag.with_count(BookmarkTag.for_bookmarks_with_tags(filter_tags), Tag.order(:key))
-    # TODO: This shouldn't need to fetch the tags, because they have already been fetched above
-    @bookmarks = Bookmark.with_tags(filter_tags).order(created_at: :desc).order(:id).preload(:tags)
-    @matching = filter_tags
+    @list = ListFacade.new(
+      Bookmark.with_tags(filter_tags),
+      BookmarkTag.for_bookmarks_with_tags(filter_tags),
+      filter_tags
+    )
   end
 
   private
@@ -106,5 +93,25 @@ class BookmarksController < ApplicationController
   # Only allow a list of trusted parameters through.
   def bookmark_params
     params.require(:bookmark).permit(:title, :uri, :tags_string)
+  end
+
+  # Validate search by tags
+  def validate_search(filter_tags)
+    return unless filter_tags.size > Bookmark::MAX_TAGS
+
+    raise Bookmark.human_attribute_name(:tags_string) + " limit reached (maximum is " \
+            + ActionController::Base.helpers.pluralize(Bookmark::MAX_TAGS, "tag") + ")"
+  end
+
+  # Canonicalise search URL
+  def canonical_search(filter_tags)
+    canonical_filter_tags = filter_tags.sort(&NaturalSort).join(",")
+    return true if params[:tags] == canonical_filter_tags
+
+    respond_to do |format|
+      format.html { redirect_to url_for(tags: canonical_filter_tags) }
+      format.json { redirect_to url_for(tags: canonical_filter_tags, format: "json") }
+    end
+    false
   end
 end

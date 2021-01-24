@@ -1,33 +1,34 @@
 module BookmarkHelper
-  def link_to_search_by_tags(tag, matching)
-    search_tags =
-      if matching.include?(tag.id)
-        matching ^ [tag.id]
-      else
-        matching | [tag.id]
-      end
-
-    if search_tags.empty?
-      search_href = root_path
-      search_title = "All bookmarks"
-    else
-      search_href = search_by_tags_path(tags: search_tags.sort(&NaturalSort).join(","))
-      search_title =
-        if matching.empty?
-          'Search by tag "' + tag.name + '"'
-        elsif matching.include? tag.id
-          'Remove tag "' + tag.name + '" from search'
-        else
-          'Add tag "' + tag.name + '" to search'
-        end
-    end
-
+  def link_to_search_by_tags(tag)
     link_to(
       tag.name,
-      search_href,
-      title: search_title,
+      tag_search_href(tag),
+      title: tag_search_title(tag),
       rel: "nofollow",
-      style: matching.include?(tag.id) ? "search_remove" : "search_add"
+      style: tag.search_match? ? "search_remove" : "search_add"
     )
+  end
+
+  private
+
+  def tag_search_href(tag)
+    if tag.search_toggle_type == :none
+      root_path
+    else
+      search_by_tags_path(tags: tag.search_toggle_tags.sort(&NaturalSort).join(","))
+    end
+  end
+
+  def tag_search_title(tag)
+    case tag.search_toggle_type
+    when :new
+      "Search by tag \"#{tag.name}\""
+    when :add
+      "Add tag \"#{tag.name}\" to search"
+    when :remove
+      "Remove tag \"#{tag.name}\" from search"
+    when :all
+      "All bookmarks"
+    end
   end
 end
