@@ -4,7 +4,10 @@ class BookmarksController < ApplicationController
   # GET /bookmarks
   # GET /bookmarks.json
   def index
-    @list = ListFacade.new
+    respond_to do |format|
+      format.html { @list = ListFacade.new }
+      format.json { @bookmarks = Bookmark.all.includes(:tags) }
+    end
   end
 
   # GET /bookmarks/1
@@ -76,11 +79,16 @@ class BookmarksController < ApplicationController
     validate_search(filter_tags)
     return unless canonical_search(filter_tags)
 
-    @list = ListFacade.new(
-      Bookmark.with_tags(filter_tags),
-      BookmarkTag.for_bookmarks_with_tags(filter_tags),
-      filter_tags
-    )
+    respond_to do |format|
+      format.html do
+        @list = ListFacade.new(
+          Bookmark.with_tags(filter_tags),
+          BookmarkTag.for_bookmarks_with_tags(filter_tags),
+          filter_tags
+        )
+      end
+      format.json { @bookmarks = Bookmark.with_tags(filter_tags).includes(:tags) }
+    end
   end
 
   private
