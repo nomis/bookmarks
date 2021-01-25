@@ -1,0 +1,5 @@
+<%
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+%>
+<li><%= link_to "Delete", delete_bookmark_path(bookmark, request_forgery_protection_token => form_authenticity_token), rel: "nofollow", data: { confirm: "Are you sure?" } %></li>

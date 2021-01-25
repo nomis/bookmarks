@@ -46,7 +46,7 @@
 			<dd>
 				<ul class="item_menu">
 					<li><%= link_to "Edit", edit_bookmark_path(bookmark), rel: "nofollow" %></li>
-					<li><%= link_to "Delete", bookmark_path(bookmark), method: :delete, data: { confirm: 'Are you sure?' } %></li>
+					<%= render "bookmark_menu", bookmark: bookmark %>
 				</ul>
 			</dd>
 		</dl>

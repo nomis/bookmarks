@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 class BookmarksController < ApplicationController
-  before_action :set_bookmark, only: [:show, :edit, :update, :destroy]
+  before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
 
   # GET /bookmarks
   # GET /bookmarks.json
@@ -57,6 +57,16 @@ class BookmarksController < ApplicationController
     end
   end
 
+  # GET /bookmarks/1/delete
+  def delete
+    raise ActionController::InvalidAuthenticityToken unless any_authenticity_token_valid?
+
+    # Tag manipulation cannot not be done concurrently in a safe way
+    @bookmark.with_advisory_lock("bookmark") { @bookmark.destroy }
+
+    redirect_to root_path, notice: "Bookmark was successfully deleted."
+  end
+
   # DELETE /bookmarks/1
   # DELETE /bookmarks/1.json
   def destroy
@@ -64,7 +74,7 @@ class BookmarksController < ApplicationController
     @bookmark.with_advisory_lock("bookmark") { @bookmark.destroy }
 
     respond_to do |format|
-      format.html { redirect_to root_path, notice: "Bookmark was successfully destroyed." }
+      format.html { redirect_to root_path, notice: "Bookmark was successfully deleted." }
       format.json { head :no_content }
     end
   end
