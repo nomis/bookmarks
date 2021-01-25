@@ -6,4 +6,4 @@ content_for :robots, "noindex"
 content_for :title, "Search by " + (@list.search_tags.size == 1 ? "tag" : "tags") + ": " + @list.search_tags.join(", ")
 %>
 <h1>Search bookmarks</h1>
-<%= render 'list', list: @list %>
+<%= render "list", list: @list %>
