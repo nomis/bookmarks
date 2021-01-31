@@ -60,6 +60,7 @@ class BookmarksController < ApplicationController
   # GET /bookmarks/1/delete
   def delete
     raise ActionController::InvalidAuthenticityToken unless any_authenticity_token_valid?
+    return unless request.get?
 
     # Tag manipulation cannot not be done concurrently in a safe way
     @bookmark.with_advisory_lock("bookmark") { @bookmark.destroy }
