@@ -22,4 +22,8 @@ class BookmarkFacade
   def tags
     @tag_facades ||= @bookmark.tags.sort_by(&:name).map { |tag| TagFacade.new(tag, @search_tags) }
   end
+
+  def created_at
+    @bookmark.created_at
+  end
 end
