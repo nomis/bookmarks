@@ -8,14 +8,14 @@ module BookmarksHelper
       tag_search_href(tag),
       title: tag_search_title(tag),
       rel: "nofollow",
-      style: tag.search_match? ? "search_remove" : "search_add"
+      class: tag_search_class(tag)
     )
   end
 
   private
 
   def tag_search_href(tag)
-    if tag.search_toggle_type == :none
+    if tag.search_toggle_type == :all
       root_path
     else
       search_by_tags_path(tags: tag.search_toggle_tags.sort(&NaturalSort).join(","))
@@ -33,5 +33,9 @@ module BookmarksHelper
     when :all
       "All bookmarks"
     end
+  end
+
+  def tag_search_class(tag)
+    tag.search_match? ? "search_remove" : "search_add"
   end
 end
