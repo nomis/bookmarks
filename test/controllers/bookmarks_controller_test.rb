@@ -1,7 +1,11 @@
 require "test_helper"
 
 class BookmarksControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
+    sign_in users(:one)
+
     @bookmark = bookmarks(:one)
   end
 
