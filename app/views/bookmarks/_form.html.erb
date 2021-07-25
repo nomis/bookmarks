@@ -16,19 +16,19 @@
 
 	<p class="field">
 		<%= form.label :title, Bookmark.human_attribute_name(:title) + ":" %>
-		<%= form.text_field :title %>
+		<%= form.text_field :title, autocomplete: "off" %>
 	</p>
 
 	<p class="field">
 		<%= form.label :uri, Bookmark.human_attribute_name(:uri) + ":" %>
-		<%= form.text_field :uri %>
+		<%= form.text_field :uri, autocomplete: "off" %>
 	</p>
 
 	<p class="field">
 		<%# :tags is used for the label text because it's plural %>
 		<%# but :tags_string is singular (for error messages) %>
 		<%= form.label :tags_string, Bookmark.human_attribute_name(:tags) + ":" %>
-		<%= form.text_field :tags_string %>
+		<%= form.text_field :tags_string, autocomplete: "off" %>
 	</p>
 
 	<p class="actions">
