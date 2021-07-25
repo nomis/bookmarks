@@ -3,6 +3,7 @@
 
 class BookmarksController < ApplicationController
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
+  before_action :authenticate_user!, except: [:index, :show, :search]
 
   # GET /bookmarks
   # GET /bookmarks.json

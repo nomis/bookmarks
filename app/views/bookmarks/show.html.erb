@@ -17,7 +17,9 @@ content_for :robots, "noindex"
 </dl>
 
 <ul class="menu">
+<% if user_signed_in? %>
 	<li><%= link_to "Edit", edit_bookmark_path(@bookmark), rel: "nofollow" %></li>
+<% end %>
 	<li><%= link_to "Back", root_path %></li>
 	<%= render "bookmark_menu", bookmark: @bookmark %>
 </ul>
