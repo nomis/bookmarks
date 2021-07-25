@@ -5,8 +5,6 @@
 content_for :title, "#" + @bookmark.id.to_s
 content_for :robots, "noindex"
 %>
-<p id="notice"><%= notice %></p>
-
 <dl class="bookmark">
 	<dt class="title"><%= Bookmark.human_attribute_name(:title) %></dt>
 	<dd class="title"><%= @bookmark.title %></dd>

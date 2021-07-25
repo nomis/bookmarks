@@ -55,6 +55,14 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
+# Database locking
 gem 'with_advisory_lock', '~> 4.6.0'
+
+# Misc
 gem 'natural_sort', '~> 0.3.0'
+
+# Performance checking while running tests
 gem 'bullet'
+
+# Authentication
+gem 'devise', '~> 4.8.0'
