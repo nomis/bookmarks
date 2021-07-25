@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  default from: "#{Etc.getpwnam(Etc.getlogin).gecos.split(/,/).first} <#{Etc.getlogin}@#{Socket.gethostbyname(Socket.gethostname).first}>"
   layout "mailer"
 end
