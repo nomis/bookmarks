@@ -37,4 +37,4 @@ en:
         # This is used as the display name for errors because the singular tag name will follow
         tags_string: "Tag"
       user:
-        login: "Username"
+        login: "Username or email"
