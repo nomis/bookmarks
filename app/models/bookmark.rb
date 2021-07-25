@@ -6,6 +6,8 @@ class Bookmark < ApplicationRecord
 
   has_and_belongs_to_many :tags, join_table: :bookmark_tags
 
+  has_paper_trail skip: [:created_at, :updated_at]
+
   validates :title, presence: true, length: { maximum: 255 }
   validates :uri, presence: true, length: { maximum: 4096 }
   validate :validate_tags_string
@@ -77,7 +79,7 @@ class Bookmark < ApplicationRecord
     # (databases may handle conflicts with this DELETE in different ways
     # so it could silently ignore newly referenced tags or raise an error
     # on the foreign key constraint)
-    Tag.where.missing(:bookmarks).where(id: removed_tags.map(&:id)).delete_all unless removed_tags.empty?
+    Tag.where.missing(:bookmarks).where(id: removed_tags.map(&:id)).destroy_all unless removed_tags.empty?
 
     @new_tags = nil
   end

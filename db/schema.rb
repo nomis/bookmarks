@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_25_083548) do
+ActiveRecord::Schema.define(version: 2021_07_25_193038) do
 
   create_table "bookmark_tags", id: false, force: :cascade do |t|
     t.integer "bookmark_id", null: false
@@ -62,6 +62,19 @@ ActiveRecord::Schema.define(version: 2021_07_25_083548) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", limit: 1073741823
+    t.datetime "created_at"
+    t.text "object_changes", limit: 1073741823
+    t.string "ip"
+    t.string "user_agent"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   add_foreign_key "bookmark_tags", "bookmarks"

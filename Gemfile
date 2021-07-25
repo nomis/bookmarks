@@ -66,3 +66,6 @@ gem 'bullet'
 
 # Authentication
 gem 'devise', '~> 4.8.0'
+
+# Track changes
+gem 'paper_trail', '~> 12'
