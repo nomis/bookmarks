@@ -7,15 +7,18 @@ class BookmarksController < ApplicationController
 
   # GET /bookmarks
   # GET /bookmarks.json
+  # GET /bookmarks.xml
   def index
     respond_to do |format|
       format.html { @list = ListFacade.new }
       format.json { @bookmarks = Bookmark.all.includes(:tags) }
+      format.xml { @bookmarks = Bookmark.all.includes(:tags) }
     end
   end
 
   # GET /bookmarks/1
   # GET /bookmarks/1.json
+  # GET /bookmarks/1.xml
   def show; end
 
   # GET /bookmarks/new
@@ -83,6 +86,7 @@ class BookmarksController < ApplicationController
 
   # GET /tags/1,2,3
   # GET /tags/1,2,3.json
+  # GET /tags/1,2,3.xml
   def search
     filter_tags = Set.new(params[:tags].split(",").map { |tag| Integer(tag) })
 
@@ -98,6 +102,7 @@ class BookmarksController < ApplicationController
         )
       end
       format.json { @bookmarks = Bookmark.with_tags(filter_tags).includes(:tags) }
+      format.xml { @bookmarks = Bookmark.with_tags(filter_tags).includes(:tags) }
     end
   end
 
