@@ -7,7 +7,7 @@ class Bookmark < ApplicationRecord
   has_and_belongs_to_many :tags, join_table: :bookmark_tags
 
   validates :title, presence: true, length: { maximum: 255 }
-  validates :uri, presence: true, length: { maximum: 4096 }
+  validates :uri, presence: true, length: { maximum: 4096 }, format: { with: URI::regexp }
   validate :validate_tags_string
 
   after_save :save_tags_string
