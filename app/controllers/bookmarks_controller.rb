@@ -23,7 +23,7 @@ class BookmarksController < ApplicationController
 
   # GET /bookmarks/new
   def new
-    @bookmark = Bookmark.new
+    @bookmark = Bookmark.new(title: params["title"], uri: params["uri"])
   end
 
   # GET /bookmarks/1/edit

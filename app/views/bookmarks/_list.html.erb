@@ -5,6 +5,7 @@
 <% if user_signed_in? %>
 <ul class="main menu">
 	<li><%= link_to "New", new_bookmark_path, rel: "nofollow" %></li>
+	<li><%= link_to "Bookmarklet", bookmarklet_uri, title: "Bookmarklet to create a new bookmark", rel: "nofollow", class: "bookmarklet" %></li>
 </ul>
 <ul class="user menu">
 	<li><%= link_to "Edit user", edit_user_registration_path, rel: "nofollow" %></li>
