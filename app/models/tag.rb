@@ -4,7 +4,7 @@
 class Tag < ApplicationRecord
   has_and_belongs_to_many :bookmarks, join_table: :bookmark_tags
 
-  validates :name, presence: true, length: { maximum: 255 }, format: { with: /\A[A-Za-z0-9_+&.-]+\z/ }
+  validates :name, presence: true, length: { maximum: 255 }, format: { with: /\A[A-Za-z0-9_+&.-]*\z/ }
   validate :name_consistent
 
   # Not validating key uniqueness here because an unsaved tag needs to be valid
