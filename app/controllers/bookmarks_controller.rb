@@ -26,6 +26,16 @@ class BookmarksController < ApplicationController
     @bookmark = Bookmark.new(title: params["title"], uri: params["uri"])
   end
 
+  # GET /bookmarks/compose
+  def compose
+    bookmark = Bookmark.find_by(uri: params["uri"])
+    if bookmark
+      redirect_to edit_bookmark_path(bookmark), notice: "Bookmark for \"#{params["title"]}\" already exists."
+    else
+      redirect_to new_bookmark_path(title: params["title"], uri: params["uri"])
+    end
+  end
+
   # GET /bookmarks/1/edit
   def edit; end
 

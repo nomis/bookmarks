@@ -6,7 +6,7 @@ module ApplicationHelper
     'javascript:' \
     + '(function(d,e){' \
       + 'window.open("' \
-        + Rails.application.routes.url_helpers.new_bookmark_url \
+        + Rails.application.routes.url_helpers.compose_bookmark_url \
         + '?uri="+e(d.location)' \
         + '+"&title="+e(d.title),' \
         + '"_blank")' \
