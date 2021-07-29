@@ -1,5 +1,5 @@
 users = [
-  {username: "example", email: "example@example.com", password: "correct horse battery staple"},
+  {username: "example", email: "example@bookmarks.example", password: "correct horse battery staple"},
 ]
 
 users.each do |user|
