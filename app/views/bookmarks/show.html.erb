@@ -21,5 +21,5 @@ content_for :robots, "noindex"
 	<li><%= link_to "Edit", edit_bookmark_path(@bookmark), rel: "nofollow" %></li>
 <% end %>
 	<li><%= link_to "Back", root_path %></li>
-	<%= render "bookmark_menu", bookmark: @bookmark %>
+	<li><%= link_to "Delete", delete_bookmark_path(@bookmark, request_forgery_protection_token => form_authenticity_token), rel: "nofollow", data: { confirm: "Are you sure?" } %></li>
 </ul>
