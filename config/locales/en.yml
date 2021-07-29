@@ -37,10 +37,17 @@ en:
         # This is used as the display name for errors because the singular tag name will follow
         tags_string: "Tag"
       user:
-        login: "Username or email"
+        login: "Username or email address"
+        email: "Email address"
     errors:
       models:
         bookmark:
           attributes:
             uri:
               taken: "already exists"
+        user:
+          attributes:
+            username:
+              taken: "already in use"
+            email:
+              taken: "already in use"

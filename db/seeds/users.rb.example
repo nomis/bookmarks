@@ -1,0 +1,8 @@
+users = [
+  {username: "example", email: "example@example.com", password: "correct horse battery staple"},
+]
+
+users.each do |user|
+  user["password_confirmation"] = user["password"]
+  User.create(user)
+end
