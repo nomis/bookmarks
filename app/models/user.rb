@@ -11,8 +11,10 @@ class User < ApplicationRecord
     @login || self.username || self.email
   end
 
-  validates :username, presence: true, uniqueness: { case_sensitive: false }
+  validates :username, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 32 }
   validates_format_of :username, with: /^[a-zA-Z0-9_-]*$/, :multiline => true
+
+  validates :email, length: { maximum: 254 }
 
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
