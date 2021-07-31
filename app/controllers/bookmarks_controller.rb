@@ -10,7 +10,7 @@ class BookmarksController < ApplicationController
   # GET /bookmarks.xml
   def index
     respond_to do |format|
-      format.html { @list = ListFacade.new }
+      format.html { @list = ListFacade.new(params) }
       format.json { @bookmarks = Bookmark.all.includes(:tags) }
       format.xml { @bookmarks = Bookmark.all.includes(:tags) }
     end
@@ -106,6 +106,7 @@ class BookmarksController < ApplicationController
     respond_to do |format|
       format.html do
         @list = ListFacade.new(
+          params,
           Bookmark.with_tags(filter_tags),
           BookmarkTag.for_bookmarks_with_tags(filter_tags),
           filter_tags

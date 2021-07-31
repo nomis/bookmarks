@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 module ApplicationHelper
+  include Pagy::Frontend
+
   def bookmarklet_uri
     'javascript:' \
     + '(function(d,e){' \

@@ -66,3 +66,6 @@ gem 'bullet'
 
 # Authentication
 gem 'devise', '~> 4.8.0'
+
+# Pagination
+gem 'pagy', '~> 4.10.1'
