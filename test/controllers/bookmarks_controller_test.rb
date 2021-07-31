@@ -21,7 +21,7 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
 
   test "should create bookmark" do
     assert_difference('Bookmark.count') do
-      post bookmarks_url, params: { bookmark: { title: @bookmark.title, uri: @bookmark.uri } }
+      post bookmarks_url, params: { bookmark: { title: "title", uri: "test:uri" } }
     end
 
     assert_redirected_to bookmark_url(Bookmark.last)
