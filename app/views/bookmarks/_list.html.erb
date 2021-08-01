@@ -2,6 +2,8 @@
 # SPDX-FileCopyrightText: 2021 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 %>
+<header>
+<nav>
 <% if user_signed_in? %>
 <ul class="main menu">
 	<li><%= link_to "New", new_bookmark_path, rel: "nofollow" %></li>
@@ -16,6 +18,7 @@
 	<li><%= link_to "Login", new_user_session_path, rel: "nofollow" %></li>
 </ul>
 <% end %>
+</nav>
 <% unless list.tags.empty? %>
 <h2>Tags</h2>
 <ul class="tags">
@@ -34,6 +37,8 @@
 	<% end %>
 </ul>
 <% end %>
+</header>
+<main>
 <h2>Bookmarks</h2>
 <ol class="bookmarks" start="<%= list.pagination.offset %>">
 	<% list.bookmarks.each do |bookmark| %>
@@ -70,6 +75,9 @@
 	</li>
 	<% end %>
 </ol>
+</main>
+<footer>
 <% if list.pagination.pages > 1 %>
 <%== pagination_nav(list.pagination) %>
 <% end %>
+</footer>
