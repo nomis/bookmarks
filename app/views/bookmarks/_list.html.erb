@@ -70,4 +70,6 @@
 	</li>
 	<% end %>
 </ol>
+<% if list.pagination.pages > 1 %>
 <%== pagy_nav(list.pagination) %>
+<% end %>
