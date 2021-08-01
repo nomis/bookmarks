@@ -35,7 +35,7 @@
 </ul>
 <% end %>
 <h2>Bookmarks</h2>
-<ol class="bookmarks">
+<ol class="bookmarks" start="<%= list.pagination.offset %>">
 	<% list.bookmarks.each do |bookmark| %>
 	<li>
 		<%= link_to bookmark.title, bookmark.uri %><%
