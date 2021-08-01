@@ -10,7 +10,10 @@ class BookmarksController < ApplicationController
   # GET /bookmarks.xml
   def index
     respond_to do |format|
-      format.html { @list = ListFacade.new(params) }
+      format.html do
+        @list = ListFacade.new(params)
+        return unless canonical_pagination(@list.pagination)
+      end
       format.json { @bookmarks = Bookmark.all.includes(:tags) }
       format.xml { @bookmarks = Bookmark.all.includes(:tags) }
     end
@@ -111,6 +114,8 @@ class BookmarksController < ApplicationController
           BookmarkTag.for_bookmarks_with_tags(filter_tags),
           filter_tags
         )
+        return unless canonical_pagination(@list.pagination, tags: params[:tags])
+        redirect_to root_path if @list.empty?
       end
       format.json { @bookmarks = Bookmark.with_tags(filter_tags).includes(:tags) }
       format.xml { @bookmarks = Bookmark.with_tags(filter_tags).includes(:tags) }
@@ -140,12 +145,28 @@ class BookmarksController < ApplicationController
   # Canonicalise search URL
   def canonical_search(filter_tags)
     canonical_filter_tags = filter_tags.sort(&NaturalSort).join(",")
-    return true if params[:tags] == canonical_filter_tags
-
-    respond_to do |format|
-      format.html { redirect_to url_for(tags: canonical_filter_tags) }
-      format.json { redirect_to url_for(tags: canonical_filter_tags, format: "json") }
+    if params[:tags] == canonical_filter_tags
+      true
+    else
+      respond_to do |format|
+        format.html { redirect_to url_for(tags: canonical_filter_tags, page: params[:page]) }
+        format.json { redirect_to url_for(tags: canonical_filter_tags, format: "json") }
+        format.xml { redirect_to url_for(tags: canonical_filter_tags, format: "xml") }
+      end
+      false
     end
-    false
+  end
+
+  # Canonicalise pagination URL
+  def canonical_pagination(pagination, **args)
+    if pagination.overflow?
+      redirect_to url_for(args.merge(page: pagination.last > 1 ? pagination.last : nil))
+      false
+    elsif params[:page].present? && (pagination.page == 1 || params[:page] != pagination.page.to_s)
+      redirect_to url_for(args.merge(page: pagination.page > 1 ? pagination.page : nil))
+      false
+    else
+      true
+    end
   end
 end

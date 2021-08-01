@@ -26,6 +26,10 @@ class ListFacade
     @search_tags_names ||= tags.select(&:search_match?).map(&:name).sort(&NaturalSort)
   end
 
+  def empty?
+    @tags.empty?
+  end
+
   private
 
   attr_reader :params
