@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2021 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
+# frozen_string_literal: true
 
 module BookmarksHelper
   def link_to_search_by_tags(tag)

@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2021 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
+# frozen_string_literal: true
 
 class BookmarksController < ApplicationController
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]

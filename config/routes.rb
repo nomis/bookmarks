@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2021 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
+# frozen_string_literal: true
 
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "registrations", sessions: "sessions" }

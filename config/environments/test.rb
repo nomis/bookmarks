@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# frozen_string_literal: true
+
 require "active_support/core_ext/integer/time"
 
 # The test environment is used exclusively to run your application's

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :registerable, :timeoutable and :omniauthable

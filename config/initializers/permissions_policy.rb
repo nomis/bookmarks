@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# frozen_string_literal: true
+
 # Define an application-wide HTTP permissions policy. For further
 # information see https://developers.google.com/web/updates/2018/06/feature-policy
 #
