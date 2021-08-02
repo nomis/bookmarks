@@ -1,0 +1,55 @@
+/* SPDX-FileCopyrightText: 2021 Simon Arlott */
+/* SPDX-License-Identifier: AGPL-3.0-or-later */
+
+$tagfg: #f63
+$tagbg: #fff
+
+.alt_text
+	display: none
+
+ul.tags, ul.item_tags
+	display: inline
+
+	margin-left: 0
+	padding-left: 0
+
+	li
+		display: inline
+
+		margin-top: 0
+		padding: 0
+		line-height: 1.75
+
+		list-style: none
+
+		color: $tagfg
+		background-color: $tagbg
+
+		font-size: smaller
+		font-weight: bold
+
+	a
+		padding: 1pt 2pt 1pt 2pt
+		border: 1pt solid $tagfg
+		border-radius: 5pt
+
+		color: $tagfg
+
+		text-decoration-line: none
+
+	li.matching, li:hover
+		a
+			color: $tagbg
+			background-color: $tagfg
+
+	li.matching:hover
+		a
+			color: $tagfg
+			background-color: $tagbg
+
+	span.count
+		font-size: smaller
+		vertical-align: top
+
+ul.tags a:hover span.name, ul.item_tags a:hover
+	text-decoration-line: underline
