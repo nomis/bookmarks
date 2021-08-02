@@ -31,10 +31,7 @@ ul.item.menu
 	li:first-child:before
 		content: ""
 
-ul.tags
-	$tagfg: #f63
-	$tagbg: #fff
-	$tagfg_active: #c00
+@mixin tags($tagfg, $tagbg, $tagfg_active, $weight)
 	$tagbg_active: $tagbg
 	$border: 1pt
 	$outline: 2pt
@@ -50,7 +47,7 @@ ul.tags
 		background-color: $tagbg
 
 		font-size: smaller
-		font-weight: bold
+		font-weight: $weight
 
 	a
 		margin: 0
@@ -88,6 +85,15 @@ ul.tags
 	span.count
 		font-size: smaller
 		vertical-align: top
+
+	strong
+		font-weight: $weight
+
+ul.main.tags
+	@include tags(#f63, #fff, #c00, bold)
+
+ul.item.tags
+	@include tags(#999, #fff, #c00, normal)
 
 ul.main.tags a:hover span.name, ul.item.tags a:hover
 	text-decoration-line: underline
