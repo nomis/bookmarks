@@ -74,7 +74,5 @@
 </ol>
 </main>
 <footer>
-<% if list.pagination.pages > 1 %>
-<%== pagination_nav(list.pagination) %>
-<% end %>
+<%== pagination_nav(list.pagination) if list.pagination.pages > 1 %>
 </footer>
