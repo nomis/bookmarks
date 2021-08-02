@@ -1,7 +1,7 @@
 /* SPDX-FileCopyrightText: 2021 Simon Arlott */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-.alt_text
+.no_css
 	display: none
 
 nav.pagination ul, ul.menu, ul.tags
@@ -27,11 +27,17 @@ ul.menu
 ul.tags
 	$tagfg: #f63
 	$tagbg: #fff
+	$tagfg_active: #c00
+	$tagbg_active: $tagbg
 	$border: 1pt
+	$outline: 2pt
 	$padding: 2pt
+	$clearance: $border + max($padding, $outline)
+
+	margin-bottom: (-($clearance))
 
 	li
-		margin: ($border + $padding) ($border + $padding) ($border + $padding) 0
+		margin: $clearance $clearance $clearance 0
 
 		color: $tagfg
 		background-color: $tagbg
@@ -40,6 +46,7 @@ ul.tags
 		font-weight: bold
 
 	a
+		margin: 0
 		padding: ($padding / 2) $padding ($padding / 2) $padding
 		border: $border solid $tagfg
 		border-radius: 5pt
@@ -58,6 +65,18 @@ ul.tags
 		a
 			color: $tagfg
 			background-color: $tagbg
+
+	li a:focus
+		color: $tagbg_active
+		background-color: $tagfg_active
+		border-color: $tagfg_active
+		outline: $outline solid $tagfg_active
+
+	li.matching a:focus
+		color: $tagfg_active
+		background-color: $tagbg_active
+		border-color: $tagfg_active
+		outline: $outline solid $tagfg_active
 
 	span.count
 		font-size: smaller
