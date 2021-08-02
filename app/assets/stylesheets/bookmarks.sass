@@ -24,6 +24,13 @@ ul.menu
 	li:first-child:before
 		content: ""
 
+ul.item.menu
+	li:before
+		content: "\00A0"
+
+	li:first-child:before
+		content: ""
+
 ul.tags
 	$tagfg: #f63
 	$tagbg: #fff
@@ -86,9 +93,36 @@ ul.main.tags a:hover span.name, ul.item.tags a:hover
 	text-decoration-line: underline
 
 ol.bookmarks
+	margin: 0
+
+	a.bookmark
+		font-size: larger
+
+	li
+		margin-bottom: 0.5em
+
 	dl, dt, dd
 		margin: 0
 		padding: 0
+
+	dl
+		display: flex
+		flex-wrap: wrap
+
+	dd
+		margin-right: 1ch
+
+a.icon
+	text-decoration-line: none
+
+	span
+		display: none
+
+a.edit:before
+	content: "📝"
+
+a.delete:before
+	content: "❌"
 
 nav.pagination ul
 	$navfg: #00c
