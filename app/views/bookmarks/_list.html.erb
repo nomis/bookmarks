@@ -21,7 +21,7 @@
 </nav>
 <% unless list.tags.empty? %>
 <h2>Tags</h2>
-<ul class="tags">
+<ul class="main tags">
 	<% list.tags.each do |t| %>
 		<%= tag.li(class: t.search_match? ? "matching" : nil) do
 			%><% if t.search_match? %><strong><% end
@@ -46,9 +46,9 @@
 			end
 		%>
 		<dl>
-			<dt><span class="alt_text"><%= Bookmark.human_attribute_name(:tags) %>:</span></dt>
-			<dd>
-				<ul class="item_tags">
+			<dt class="alt_text"><%= Bookmark.human_attribute_name(:tags) %>:</dt>
+			<dd class="item_tags">
+				<ul class="item tags">
 					<% bookmark.tags.each do |t| %>
 						<%= tag.li(class: t.search_match? ? "matching" : nil) do
 							%><% if t.search_match? %><strong><% end
@@ -58,11 +58,11 @@
 					<% end %>
 				</ul>
 			</dd>
-			<dt><span class="alt_text">Created:</span></dt>
+			<dt class="alt_text">Created:</dt>
 			<dd><%= bookmark.created_at %></dd>
 			<% if user_signed_in? %>
-			<dt><span class="alt_text">Actions:</span></dt>
-			<dd>
+			<dt class="alt_text">Actions:</dt>
+			<dd class="item menu">
 				<ul class="item menu">
 					<li><%= link_to "Edit", edit_bookmark_path(bookmark), rel: "nofollow" %></li>
 					<li><%= link_to "Delete", delete_bookmark_path(bookmark, request_forgery_protection_token => form_authenticity_token), rel: "nofollow", data: { confirm: "Are you sure?" } %></li>

@@ -1,26 +1,37 @@
 /* SPDX-FileCopyrightText: 2021 Simon Arlott */
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 
-$tagfg: #f63
-$tagbg: #fff
-
 .alt_text
 	display: none
 
-ul.tags, ul.item_tags
-	display: inline
+nav.pagination ul, ul.menu, ul.tags
+	display: flex
+	flex-wrap: wrap
 
-	margin-left: 0
-	padding-left: 0
+	margin: 0
+	padding: 0
 
 	li
-		display: inline
-
-		margin-top: 0
+		margin: 0
 		padding: 0
-		line-height: 1.75
 
 		list-style: none
+
+ul.menu
+	li:before
+		content: "\00A0 | "
+
+	li:first-child:before
+		content: ""
+
+ul.tags
+	$tagfg: #f63
+	$tagbg: #fff
+	$border: 1pt
+	$padding: 2pt
+
+	li
+		margin: ($border + $padding) ($border + $padding) ($border + $padding) 0
 
 		color: $tagfg
 		background-color: $tagbg
@@ -29,11 +40,12 @@ ul.tags, ul.item_tags
 		font-weight: bold
 
 	a
-		padding: 1pt 2pt 1pt 2pt
-		border: 1pt solid $tagfg
+		padding: ($padding / 2) $padding ($padding / 2) $padding
+		border: $border solid $tagfg
 		border-radius: 5pt
 
 		color: $tagfg
+		background-color: $tagbg
 
 		text-decoration-line: none
 
@@ -51,5 +63,43 @@ ul.tags, ul.item_tags
 		font-size: smaller
 		vertical-align: top
 
-ul.tags a:hover span.name, ul.item_tags a:hover
+ul.main.tags a:hover span.name, ul.item.tags a:hover
 	text-decoration-line: underline
+
+ol.bookmarks
+	dl, dt, dd
+		margin: 0
+		padding: 0
+
+nav.pagination ul
+	$navfg: #00c
+	$navbg: #fff
+	$border: 1px
+	$padding: 1ch
+
+	border-left: $border solid $navfg
+
+	font-size: larger
+
+	li
+		padding: 0 $padding 0 $padding
+
+		border-style: solid
+		border-color: $navfg
+		border-width: $border $border $border 0
+
+	li.active
+		font-weight: bold
+
+	li:hover
+		a:link, a:visited, a:hover, a:active
+			color: $navbg
+			background-color: $navfg
+
+	a
+		display: block
+
+		margin: 0 (-$padding) 0 (-$padding)
+		padding: 0 $padding 0 $padding
+
+		text-decoration-line: none
