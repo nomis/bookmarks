@@ -34,9 +34,8 @@ div.field, div.actions
 	color: green
 
 .field_with_errors
-	padding: 2px
+	padding: 2pt 2pt 4pt 2pt
 	background-color: #ffc0c0
-	display: table
 
 #error_explanation
 	width: 450px
@@ -58,5 +57,12 @@ div.field, div.actions
 	font-size: smaller
 	list-style: square
 
-label
-	display: block
+form.wide
+	max-width: 50ch
+
+	.field, .field span
+		display: flex
+		flex-direction: column
+
+		input
+			flex: 1
