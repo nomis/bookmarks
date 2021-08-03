@@ -5,6 +5,12 @@
 class SessionsController < Devise::SessionsController
   before_action :validate_sign_out?, only: [:destroy]
 
+  def new
+    super do |resource|
+      resource.remember_me = true
+    end
+  end
+
   protected
 
   def validate_sign_out?
