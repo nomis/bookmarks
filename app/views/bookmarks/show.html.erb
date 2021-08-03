@@ -10,10 +10,12 @@ content_for :robots, "noindex"
 	<dd class="title"><%= @bookmark.title %></dd>
 	<dt class="uri"><%= Bookmark.human_attribute_name(:uri) %></dt>
 	<dd class="uri"><%= link_to @bookmark.uri, @bookmark.uri %></dd>
-	<%# :tags is used for the label text because it's plural %>
-	<%# but :tags_string is singular (for error messages) %>
-	<dt class="tags"><%= Bookmark.human_attribute_name(:tags) %></dt>
-	<dd class="tags"><%= @bookmark.tags_string %></dd>
+	<% if @bookmark.tags_string.present? %>
+		<%# :tags is used for the label text because it's plural %>
+		<%# but :tags_string is singular (for error messages) %>
+		<dt class="tags"><%= Bookmark.human_attribute_name(:tags) %></dt>
+		<dd class="tags"><%= @bookmark.tags_string %></dd>
+	<% end %>
 </dl>
 
 <ul class="menu">
