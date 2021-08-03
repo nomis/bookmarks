@@ -5,4 +5,7 @@ json.extract! bookmark, :id, :title, :uri
 json.tags bookmark.tags do |tag|
   json.extract! tag, :id, :name, :created_at, :updated_at
 end
+if user_signed_in?
+  json.extract! bookmark, :private
+end
 json.extract! bookmark, :created_at, :updated_at

@@ -16,6 +16,15 @@ content_for :robots, "noindex"
 		<dt class="tags"><%= Bookmark.human_attribute_name(:tags) %></dt>
 		<dd class="tags"><%= @bookmark.tags_string %></dd>
 	<% end %>
+	<% if user_signed_in? %>
+		<% if @bookmark.private? %>
+			<dt class="private"><%= Bookmark.human_attribute_name(:private) %></dt>
+			<dd class="private">🔒</dd>
+		<% else %>
+			<dt class="private"><%= Bookmark.human_attribute_name(:public) %></dt>
+			<dd class="private">🔓</dd>
+		<% end %>
+	<% end %>
 </dl>
 
 <ul class="menu">

@@ -24,6 +24,10 @@ class BookmarkFacade
     @tag_facades ||= @bookmark.tags.sort_by(&:name).map { |tag| TagFacade.new(tag, @search_tags) }
   end
 
+  def private?
+    @private ||= @bookmark.private
+  end
+
   def created_at
     @bookmark.created_at
   end

@@ -29,12 +29,6 @@ class Tag < ApplicationRecord
     name.downcase
   end
 
-  def self.with_count(*others)
-    others.inject(BookmarkTag.joins(:tag)) do |query, other|
-      query.merge(other)
-    end.group(:tag).count
-  end
-
   private
 
   def key=(key)

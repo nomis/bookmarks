@@ -7,3 +7,11 @@ one:
 two:
   title: Two
   uri: https://two.example.com/
+
+three:
+  title: Three
+  uri: https://three.example.com/
+
+four:
+  title: Four
+  uri: https://four.example.com/

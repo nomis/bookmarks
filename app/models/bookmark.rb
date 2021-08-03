@@ -7,6 +7,14 @@ class Bookmark < ApplicationRecord
 
   has_and_belongs_to_many :tags, join_table: :bookmark_tags
 
+  scope :for_user, ->(user_signed_in) { user_signed_in ? all : where(private: false) }
+
+  scope :with_tags, ->(tags) do
+    tags.inject(self) do |query, tag|
+      query.where(id: BookmarkTag.select(:bookmark_id).where(tag_id: tag))
+    end
+  end
+
   validates :title, presence: true, length: { maximum: 255 }
   validates :uri, presence: true, length: { maximum: 4096 }, format: { with: URI::regexp, allow_blank: true }, uniqueness: true
   validate :validate_tags_string
@@ -15,17 +23,11 @@ class Bookmark < ApplicationRecord
   before_destroy :remove_all_tags
 
   def tags_string
-    (@new_tags ? @new_tags.values : tags).map(&:name).sort_by(&:downcase).join(" ")
+    (@new_tags ? @new_tags.values : tags).pluck(:name).sort_by(&:downcase).join(" ")
   end
 
   def tags_string=(tags_string)
     @new_tags = tags_string.split.map { |name| Tag.new(name: name) }.map { |tag| [tag.key, tag] }.to_h
-  end
-
-  def self.with_tags(tags)
-    tags.inject(Bookmark) do |query, tag|
-      query.where(id: BookmarkTag.select(:bookmark_id).where(tag_id: tag))
-    end
   end
 
   private
@@ -78,7 +80,7 @@ class Bookmark < ApplicationRecord
     # (databases may handle conflicts with this DELETE in different ways
     # so it could silently ignore newly referenced tags or raise an error
     # on the foreign key constraint)
-    Tag.where.missing(:bookmarks).where(id: removed_tags.map(&:id)).delete_all unless removed_tags.empty?
+    Tag.where.missing(:bookmarks).where(id: removed_tags.pluck(:id)).delete_all unless removed_tags.empty?
 
     @new_tags = nil
   end

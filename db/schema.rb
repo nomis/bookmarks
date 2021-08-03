@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_29_181241) do
+ActiveRecord::Schema.define(version: 2021_08_03_085330) do
 
   create_table "bookmark_tags", id: false, force: :cascade do |t|
     t.integer "bookmark_id", null: false
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2021_07_29_181241) do
     t.text "uri", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "private", default: false, null: false
     t.index ["uri"], name: "index_bookmarks_on_uri", unique: true
   end
 

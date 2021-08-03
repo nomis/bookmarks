@@ -43,6 +43,9 @@
 			if uri.host
 				%> (<%= uri.host %>)<%
 			end
+			if bookmark.private?
+				%> <span title="Private">🔒</span><%
+			end
 		%>
 		<dl>
 			<dt class="no_css"><%= Bookmark.human_attribute_name(:tags) %>:</dt>

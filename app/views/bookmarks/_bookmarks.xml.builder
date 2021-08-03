@@ -23,6 +23,13 @@ xml.xbel(version: "1.0",
 							xml.tag!("a:name", tag.name)
 						end
 					end
+					if user_signed_in?
+						if bookmark.private?
+							xml.private
+						else
+							xml.public
+						end
+					end
 				end
 			end
 		end

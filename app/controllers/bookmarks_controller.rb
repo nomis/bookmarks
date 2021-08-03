@@ -5,18 +5,21 @@
 class BookmarksController < ApplicationController
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
   before_action :authenticate_user!, except: [:index, :show, :search]
+  before_action :check_access, only: [:show]
 
   # GET /bookmarks
   # GET /bookmarks.json
   # GET /bookmarks.xml
   def index
+    bookmarks = Bookmark.for_user(user_signed_in?)
+
     respond_to do |format|
       format.html do
-        @list = ListFacade.new(params)
+        @list = ListFacade.new(params, bookmarks, BookmarkTag.for_user(user_signed_in?))
         return unless canonical_pagination(@list.pagination)
       end
-      format.json { @bookmarks = Bookmark.all.includes(:tags) }
-      format.xml { @bookmarks = Bookmark.all.includes(:tags) }
+      format.json { @bookmarks = bookmarks.includes(:tags) }
+      format.xml { @bookmarks = bookmarks.includes(:tags) }
     end
   end
 
@@ -107,19 +110,21 @@ class BookmarksController < ApplicationController
     validate_search(filter_tags)
     return unless canonical_search(filter_tags)
 
+    bookmarks = Bookmark.for_user(user_signed_in?).with_tags(filter_tags)
+
     respond_to do |format|
       format.html do
         @list = ListFacade.new(
           params,
-          Bookmark.with_tags(filter_tags),
-          BookmarkTag.for_bookmarks_with_tags(filter_tags),
+          bookmarks,
+          BookmarkTag.for_user(user_signed_in?).with_tags(filter_tags),
           filter_tags
         )
         return unless canonical_pagination(@list.pagination, tags: params[:tags])
         redirect_to root_path if @list.empty?
       end
-      format.json { @bookmarks = Bookmark.with_tags(filter_tags).includes(:tags) }
-      format.xml { @bookmarks = Bookmark.with_tags(filter_tags).includes(:tags) }
+      format.json { @bookmarks = bookmarks.includes(:tags) }
+      format.xml { @bookmarks = bookmarks.includes(:tags) }
     end
   end
 
@@ -130,9 +135,13 @@ class BookmarksController < ApplicationController
     @bookmark = Bookmark.find(params[:id])
   end
 
+  def check_access
+    authenticate_user! if @bookmark.private?
+  end
+
   # Only allow a list of trusted parameters through.
   def bookmark_params
-    params.require(:bookmark).permit(:title, :uri, :tags_string)
+    params.require(:bookmark).permit(:title, :uri, :tags_string, :private)
   end
 
   # Validate search by tags

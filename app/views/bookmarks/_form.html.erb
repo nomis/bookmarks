@@ -31,6 +31,11 @@
 		<%= form.text_field :tags_string, autocomplete: "off" %>
 	</p>
 
+	<p class="field inline">
+		<%= form.label :private, Bookmark.human_attribute_name(:private) + ":" %>
+		<%= form.check_box :private, autocomplete: "off" %>
+	</p>
+
 	<p class="actions">
 		<%= form.submit %>
 	</p>

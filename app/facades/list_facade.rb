@@ -7,9 +7,9 @@ include Pagy::Backend
 class ListFacade
   attr_reader :pagination
 
-  def initialize(params, bookmarks = Bookmark.all, tags = Tag.all, search_tags = Set.new)
+  def initialize(params, bookmarks, tags, search_tags = Set.new)
     @params = params
-    @tags = Tag.with_count(tags, Tag.order(:key))
+    @tags = tags.count_tags
     # TODO: This shouldn't need to fetch the tags, because they have already been fetched above
     @pagination, @bookmarks = pagy(bookmarks.order(created_at: :desc).order(:id).includes(:tags))
     @search_tags = search_tags
