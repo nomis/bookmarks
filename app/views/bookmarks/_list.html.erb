@@ -43,37 +43,9 @@
 <div id="pagination">
 	<%= render "list_pagination" %>
 </div>
+<% if @list.pagination.pages > 1 %>
 <script type="text/javascript">
-	var loadMore = function() {
-		var moreLink = document.getElementById("more_link");
-		if (!moreLink) {
-			console.log("No more pages");
-			// document.getElementById("pagination").innerHTML = "";
-
-			window.removeEventListener("resize", loadMore);
-			window.removeEventListener("scroll", loadMore);
-			window.removeEventListener("load", loadMore);
-			return;
-		}
-
-		if (moreLink.dataset.loading) {
-			return;
-		}
-
-		var viewBottom = document.documentElement.scrollTop + document.documentElement.clientHeight * 1.25;
-		var list = document.getElementById("bookmarks");
-		var listBottom = list.offsetTop + list.clientHeight;
-
-		if (viewBottom >= listBottom) {
-			console.log("Loading next page");
-
-			moreLink.dataset.loading = true;
-			moreLink.click();
-		}
-	};
-
-	window.addEventListener("resize", loadMore);
-	window.addEventListener("scroll", loadMore);
-	window.addEventListener("load", loadMore);
+Bookmarks.incrementalStart();
 </script>
+<% end %>
 </footer>

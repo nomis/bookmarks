@@ -116,12 +116,12 @@ class BookmarksController < ApplicationController
     end
   end
 
-  # GET /incremental.js?page=...[&tags=...]
+  # GET /incremental.json?page=...[&tags=...]
   def incremental
     return unless load_bookmarks(params[:tags])
 
     respond_to do |format|
-      format.js
+      format.json
     end
   end
 
@@ -143,7 +143,7 @@ class BookmarksController < ApplicationController
 
   # Load bookmarks for index, search or incremental output
   def load_bookmarks(tags = nil)
-    bookmarks = Bookmark.for_user(user_signed_in?)
+    @bookmarks = Bookmark.for_user(user_signed_in?)
     bookmark_tags = BookmarkTag.for_user(user_signed_in?)
     filter_tags = tags ? Set.new(tags.split(",").map { |tag| Integer(tag) }) : Set.new()
 
@@ -151,18 +151,11 @@ class BookmarksController < ApplicationController
       validate_search(filter_tags)
       return false unless canonical_search(filter_tags)
 
-      bookmarks = bookmarks.with_tags(filter_tags)
+      @bookmarks = @bookmarks.with_tags(filter_tags)
       bookmark_tags = bookmark_tags.with_tags(filter_tags)
     end
 
-    list = ListFacade.new(params, bookmarks, bookmark_tags, filter_tags)
-
-    respond_to do |format|
-      format.html { @list = list }
-      format.js { @list = list }
-      format.json { @bookmarks = bookmarks }
-      format.xml { @bookmarks = bookmarks }
-    end
+    @list = ListFacade.new(params, @bookmarks, bookmark_tags, filter_tags)
     true
   end
 
@@ -182,9 +175,8 @@ class BookmarksController < ApplicationController
     else
       respond_to do |format|
         format.html { redirect_to url_for(tags: canonical_filter_tags, page: params[:page]) }
-        format.json { redirect_to url_for(tags: canonical_filter_tags, format: "json") }
-        format.xml { redirect_to url_for(tags: canonical_filter_tags, format: "xml") }
-        format.js { head :bad_request }
+        format.json { redirect_to url_for(tags: canonical_filter_tags, page: params[:page], format: "json") }
+        format.xml { redirect_to url_for(tags: canonical_filter_tags, page: params[:page], format: "xml") }
       end
       false
     end

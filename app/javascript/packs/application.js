@@ -6,6 +6,9 @@
 import Rails from "@rails/ujs"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
+import * as Bookmarks from "bookmarks"
 
 Rails.start()
 ActiveStorage.start()
+
+global.Bookmarks = Bookmarks
