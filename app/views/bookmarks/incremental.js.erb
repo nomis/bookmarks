@@ -4,7 +4,7 @@
 %>
 (function(){
 	console.log("Adding page <%= @list.pagination.page %>");
-	document.getElementById("bookmarks").insertAdjacentHTML("beforeend", "<%= j(render "list_bookmarks")%>");
+	document.getElementById("bookmarks").insertAdjacentHTML("beforeend", "<%= j(render "list_bookmarks") %>");
 	document.getElementById("pagination").innerHTML = "<%= j(render "list_pagination") %>";
 	console.log(`Added page <%= @list.pagination.page %>`);
 

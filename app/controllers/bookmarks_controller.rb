@@ -4,24 +4,19 @@
 
 class BookmarksController < ApplicationController
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
-  before_action :authenticate_user!, except: [:index, :show, :search]
+  before_action :authenticate_user!, except: [:index, :show, :search, :incremental]
   before_action :check_access, only: [:show]
 
   # GET /bookmarks
   # GET /bookmarks.json
   # GET /bookmarks.xml
   def index
-    bookmarks = Bookmark.for_user(user_signed_in?)
-    list = ListFacade.new(params, bookmarks, BookmarkTag.for_user(user_signed_in?))
+    return unless load_bookmarks
 
     respond_to do |format|
-      format.html do
-        @list = list
-        return unless canonical_pagination(@list.pagination)
-      end
-      format.js { @list = list }
-      format.json { @bookmarks = bookmarks.includes(:tags) }
-      format.xml { @bookmarks = bookmarks.includes(:tags) }
+      format.html { canonical_pagination(@list.pagination) }
+      format.json { @bookmarks = @bookmarks.includes(:tags) }
+      format.xml { @bookmarks = @bookmarks.includes(:tags) }
     end
   end
 
@@ -107,28 +102,24 @@ class BookmarksController < ApplicationController
   # GET /tags/1,2,3.json
   # GET /tags/1,2,3.xml
   def search
-    filter_tags = Set.new(params[:tags].split(",").map { |tag| Integer(tag) })
-
-    validate_search(filter_tags)
-    return unless canonical_search(filter_tags)
-
-    bookmarks = Bookmark.for_user(user_signed_in?).with_tags(filter_tags)
-    list = ListFacade.new(
-      params,
-      bookmarks,
-      BookmarkTag.for_user(user_signed_in?).with_tags(filter_tags),
-      filter_tags
-    )
+    return unless load_bookmarks(params[:tags])
 
     respond_to do |format|
       format.html do
-        @list = list
         return unless canonical_pagination(@list.pagination, tags: params[:tags])
         redirect_to root_path if @list.empty?
       end
-      format.js { @list = list }
-      format.json { @bookmarks = bookmarks.includes(:tags) }
-      format.xml { @bookmarks = bookmarks.includes(:tags) }
+      format.json { @bookmarks = @bookmarks.includes(:tags) }
+      format.xml { @bookmarks = @bookmarks.includes(:tags) }
+    end
+  end
+
+  # GET /incremental.js?page=...[&tags=...]
+  def incremental
+    return unless load_bookmarks(params[:tags])
+
+    respond_to do |format|
+      format.js
     end
   end
 
@@ -146,6 +137,31 @@ class BookmarksController < ApplicationController
   # Only allow a list of trusted parameters through.
   def bookmark_params
     params.require(:bookmark).permit(:title, :uri, :tags_string, :private)
+  end
+
+  # Load bookmarks for index, search or incremental output
+  def load_bookmarks(tags = nil)
+    bookmarks = Bookmark.for_user(user_signed_in?)
+    bookmark_tags = BookmarkTag.for_user(user_signed_in?)
+    filter_tags = tags ? Set.new(tags.split(",").map { |tag| Integer(tag) }) : Set.new()
+
+    if !filter_tags.empty?
+      validate_search(filter_tags)
+      return false unless canonical_search(filter_tags)
+
+      bookmarks = bookmarks.with_tags(filter_tags)
+      bookmark_tags = bookmark_tags.with_tags(filter_tags)
+    end
+
+    list = ListFacade.new(params, bookmarks, bookmark_tags, filter_tags)
+
+    respond_to do |format|
+      format.html { @list = list }
+      format.js { @list = list }
+      format.json { @bookmarks = bookmarks }
+      format.xml { @bookmarks = bookmarks }
+    end
+    true
   end
 
   # Validate search by tags
@@ -166,6 +182,7 @@ class BookmarksController < ApplicationController
         format.html { redirect_to url_for(tags: canonical_filter_tags, page: params[:page]) }
         format.json { redirect_to url_for(tags: canonical_filter_tags, format: "json") }
         format.xml { redirect_to url_for(tags: canonical_filter_tags, format: "xml") }
+        format.js { head :bad_request }
       end
       false
     end
