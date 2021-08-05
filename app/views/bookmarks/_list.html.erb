@@ -18,10 +18,10 @@
 <% end %>
 </ul>
 </nav>
-<% unless list.tags.empty? %>
+<% if @list.tags.present? %>
 <h2>Tags</h2>
 <ul class="main tags">
-	<% list.tags.each do |t| %>
+	<% @list.tags.each do |t| %>
 		<%= tag.li(class: t.search_match? ? "matching" : nil) do
 			%><% if t.search_match? %><strong><% end
 			%><%= link_to_search_by_tags(t) do
@@ -35,47 +35,45 @@
 </header>
 <main id="main">
 <h2>Bookmarks</h2>
-<ol class="bookmarks" start="<%= list.pagination.offset + 1 %>">
-	<% list.bookmarks.each do |bookmark| %>
-	<li>
-		<%= link_to bookmark.title, bookmark.uri, class: "bookmark" %><%
-			uri = URI.parse(bookmark.uri)
-			if uri.host
-				%> (<%= uri.host %>)<%
-			end
-			if bookmark.private?
-				%> <span title="Private">🔒</span><%
-			end
-		%>
-		<dl>
-			<dt class="no_css"><%= Bookmark.human_attribute_name(:tags) %>:</dt>
-			<% if bookmark.tags.present? %>
-				<dd class="item tags">
-					<ul class="item tags">
-						<% bookmark.tags.each do |t| %>
-							<%= tag.li(class: t.search_match? ? "matching" : nil) do
-								%><% if t.search_match? %><strong><% end
-								%><%= link_to_search_by_tags(t)
-								%><% if t.search_match? %></strong><% end
-							end %>
-						<% end %>
-					</ul>
-				</dd>
-			<% end %>
-			<% if user_signed_in? %>
-			<dt class="no_css">Actions:</dt>
-			<dd class="item menu">
-				<ul class="item menu">
-					<li><%= link_to edit_bookmark_path(bookmark), rel: "nofollow", title: "Edit", class: "icon edit" do %><span>Edit</span><% end %></li>
-					<li><%= link_to delete_bookmark_path(bookmark, request_forgery_protection_token => form_authenticity_token), rel: "nofollow", title: "Delete", class: "icon delete", data: { confirm: "Are you sure?" } do %><span>Delete</span><% end %></li>
-				</ul>
-			</dd>
-			<% end %>
-		</dl>
-	</li>
-	<% end %>
+<ol id="bookmarks" class="bookmarks" start="<%= @list.pagination.offset + 1 %>">
+	<%= render "list_bookmarks" %>
 </ol>
 </main>
 <footer>
-<%== pagination_nav(list.pagination) if list.pagination.pages > 1 %>
+<div id="pagination">
+	<%= render "list_pagination" %>
+</div>
+<script type="text/javascript">
+	var loadMore = function() {
+		var moreLink = document.getElementById("more_link");
+		if (!moreLink) {
+			console.log("No more pages");
+			// document.getElementById("pagination").innerHTML = "";
+
+			window.removeEventListener("resize", loadMore);
+			window.removeEventListener("scroll", loadMore);
+			window.removeEventListener("load", loadMore);
+			return;
+		}
+
+		if (moreLink.dataset.loading) {
+			return;
+		}
+
+		var viewBottom = document.documentElement.scrollTop + document.documentElement.clientHeight * 1.25;
+		var list = document.getElementById("bookmarks");
+		var listBottom = list.offsetTop + list.clientHeight;
+
+		if (viewBottom >= listBottom) {
+			console.log("Loading next page");
+
+			moreLink.dataset.loading = true;
+			moreLink.click();
+		}
+	};
+
+	window.addEventListener("resize", loadMore);
+	window.addEventListener("scroll", loadMore);
+	window.addEventListener("load", loadMore);
+</script>
 </footer>

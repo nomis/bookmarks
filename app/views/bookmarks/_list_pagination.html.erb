@@ -1,0 +1,8 @@
+<%
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+%>
+<%== pagination_nav(@list.pagination) if @list.pagination.pages > 1 %>
+<% if @list.pagination.page < @list.pagination.pages %>
+<a id="more_link" class="no_css" href="<%= pagy_url_for(@list.pagination, @list.pagination.next) %>" rel="nofollow" data-remote="true"></a>
+<% end %>

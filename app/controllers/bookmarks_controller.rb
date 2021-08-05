@@ -12,12 +12,14 @@ class BookmarksController < ApplicationController
   # GET /bookmarks.xml
   def index
     bookmarks = Bookmark.for_user(user_signed_in?)
+    list = ListFacade.new(params, bookmarks, BookmarkTag.for_user(user_signed_in?))
 
     respond_to do |format|
       format.html do
-        @list = ListFacade.new(params, bookmarks, BookmarkTag.for_user(user_signed_in?))
+        @list = list
         return unless canonical_pagination(@list.pagination)
       end
+      format.js { @list = list }
       format.json { @bookmarks = bookmarks.includes(:tags) }
       format.xml { @bookmarks = bookmarks.includes(:tags) }
     end
@@ -111,18 +113,20 @@ class BookmarksController < ApplicationController
     return unless canonical_search(filter_tags)
 
     bookmarks = Bookmark.for_user(user_signed_in?).with_tags(filter_tags)
+    list = ListFacade.new(
+      params,
+      bookmarks,
+      BookmarkTag.for_user(user_signed_in?).with_tags(filter_tags),
+      filter_tags
+    )
 
     respond_to do |format|
       format.html do
-        @list = ListFacade.new(
-          params,
-          bookmarks,
-          BookmarkTag.for_user(user_signed_in?).with_tags(filter_tags),
-          filter_tags
-        )
+        @list = list
         return unless canonical_pagination(@list.pagination, tags: params[:tags])
         redirect_to root_path if @list.empty?
       end
+      format.js { @list = list }
       format.json { @bookmarks = bookmarks.includes(:tags) }
       format.xml { @bookmarks = bookmarks.includes(:tags) }
     end

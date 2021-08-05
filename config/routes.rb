@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: "registrations", sessions: "sessions" }
   root "bookmarks#index"
   get "/bookmarks/compose", to: "bookmarks#compose", as: :compose_bookmark, constraints: { format: ["html"] }
-  resources :bookmarks, constraints: { format: ["html", "json", "xml"] }
+  resources :bookmarks, constraints: { format: ["html", "json", "xml", "js"] }
   get "/bookmarks/:id/delete", to: "bookmarks#delete", as: :delete_bookmark, constraints: { format: ["html"] }
-  get "/tags/:tags", to: "bookmarks#search", as: :search_by_tags, constraints: { format: ["html", "json", "xml"] }
+  get "/tags/:tags", to: "bookmarks#search", as: :search_by_tags, constraints: { format: ["html", "json", "xml", "js"] }
 end

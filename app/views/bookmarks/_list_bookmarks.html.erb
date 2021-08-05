@@ -1,0 +1,42 @@
+<%
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+%>
+<% @list.bookmarks.each do |bookmark| %>
+	<li>
+		<%= link_to bookmark.title, bookmark.uri, class: "bookmark" %><%
+			uri = URI.parse(bookmark.uri)
+			if uri.host
+				%> (<%= uri.host %>)<%
+			end
+			if bookmark.private?
+				%> <span title="Private">🔒</span><%
+			end
+		%>
+		<dl>
+			<dt class="no_css"><%= Bookmark.human_attribute_name(:tags) %>:</dt>
+			<% if bookmark.tags.present? %>
+				<dd class="item tags">
+					<ul class="item tags">
+						<% bookmark.tags.each do |t| %>
+							<%= tag.li(class: t.search_match? ? "matching" : nil) do
+								%><% if t.search_match? %><strong><% end
+								%><%= link_to_search_by_tags(t)
+								%><% if t.search_match? %></strong><% end
+							end %>
+						<% end %>
+					</ul>
+				</dd>
+			<% end %>
+			<% if user_signed_in? %>
+			<dt class="no_css">Actions:</dt>
+			<dd class="item menu">
+				<ul class="item menu">
+					<li><%= link_to edit_bookmark_path(bookmark), rel: "nofollow", title: "Edit", class: "icon edit" do %><span>Edit</span><% end %></li>
+					<li><%= link_to delete_bookmark_path(bookmark, request_forgery_protection_token => form_authenticity_token), rel: "nofollow", title: "Delete", class: "icon delete", data: { confirm: "Are you sure?" } do %><span>Delete</span><% end %></li>
+				</ul>
+			</dd>
+			<% end %>
+		</dl>
+	</li>
+<% end %>
