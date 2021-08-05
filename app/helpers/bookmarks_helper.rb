@@ -4,11 +4,11 @@
 
 module BookmarksHelper
   def link_to_search_by_tags(tag)
-    link_to tag_search_href(tag), title: tag_search_title(tag), rel: "nofollow", class: tag_search_class(tag) do
-      if block_given?
-        yield
-      else
-        tag.name
+    if tag.search_toggle_type == :none
+      block_given? ? yield.html_safe : tag.name
+    else
+      link_to tag_search_href(tag), title: tag_search_title(tag), rel: "nofollow", class: tag_search_class(tag) do
+        block_given? ? yield : tag.name
       end
     end
   end

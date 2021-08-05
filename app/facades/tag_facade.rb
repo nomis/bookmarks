@@ -3,6 +3,8 @@
 # frozen_string_literal: true
 
 class TagFacade
+  MAX_TAGS = Rails.configuration.x.maximum_tags
+
   attr_reader :count
 
   def initialize(tag, search_tags = Set.new, count = nil)
@@ -35,6 +37,8 @@ class TagFacade
       :all
     elsif search_match?
       :remove
+    elsif search_toggle_tags.size > MAX_TAGS
+      :none
     elsif search_toggle_tags.size > 1
       :add
     else

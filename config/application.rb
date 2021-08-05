@@ -27,5 +27,7 @@ module Bookmarks
 
     # Rails (6.1.1) does not set Vary: correctly, so Accept: must be ignored
     config.action_dispatch.ignore_accept_header = true
+
+    config.x.maximum_tags = 100
   end
 end

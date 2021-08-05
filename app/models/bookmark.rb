@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 
 class Bookmark < ApplicationRecord
-  MAX_TAGS = 100
+  MAX_TAGS = Rails.configuration.x.maximum_tags
 
   has_and_belongs_to_many :tags, join_table: :bookmark_tags
 

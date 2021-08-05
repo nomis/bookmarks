@@ -3,6 +3,8 @@
 # frozen_string_literal: true
 
 class BookmarksController < ApplicationController
+  MAX_TAGS = Rails.configuration.x.maximum_tags
+
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
   before_action :authenticate_user!, except: [:index, :show, :search, :incremental]
   before_action :check_access, only: [:show]
@@ -166,10 +168,10 @@ class BookmarksController < ApplicationController
 
   # Validate search by tags
   def validate_search(filter_tags)
-    return unless filter_tags.size > Bookmark::MAX_TAGS
+    return unless filter_tags.size > MAX_TAGS
 
     raise Bookmark.human_attribute_name(:tags_string) + " limit reached (maximum is " \
-            + ActionController::Base.helpers.pluralize(Bookmark::MAX_TAGS, "tag") + ")"
+            + ActionController::Base.helpers.pluralize(MAX_TAGS, "tag") + ")"
   end
 
   # Canonicalise search URL
