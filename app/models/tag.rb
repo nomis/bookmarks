@@ -21,10 +21,6 @@ class Tag < ApplicationRecord
     self[:key] = name&.downcase
   end
 
-  def count
-    self[:count]
-  end
-
   def self.make_key(name)
     name.downcase
   end
