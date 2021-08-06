@@ -34,10 +34,14 @@
 <% end %>
 </header>
 <main id="main">
+<% if @list.bookmarks.present? %>
 <h2>Bookmarks</h2>
 <ol id="bookmarks" class="bookmarks" start="<%= @list.pagination.offset + 1 %>">
 	<%= render "list_bookmarks" %>
 </ol>
+<% else %>
+<p>No bookmarks.</p>
+<% end %>
 </main>
 <footer>
 <div id="pagination">
