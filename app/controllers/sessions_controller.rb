@@ -19,6 +19,7 @@ class SessionsController < Devise::SessionsController
   protected
 
   def validate_sign_out?
+    return unless ActionController::Base.allow_forgery_protection
     raise ActionController::InvalidAuthenticityToken unless any_authenticity_token_valid?
   end
 end

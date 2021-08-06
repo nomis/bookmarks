@@ -8,6 +8,7 @@ class BookmarksController < ApplicationController
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
   before_action :authenticate_user!, except: [:index, :show, :search, :incremental]
   before_action :check_access, only: [:show]
+  before_action :delete_cookies
 
   # GET /bookmarks
   # GET /bookmarks.json
@@ -193,6 +194,14 @@ class BookmarksController < ApplicationController
       false
     else
       true
+    end
+  end
+
+  # Delete all cookies unless signed in
+  def delete_cookies
+    if !user_signed_in?
+      request.session_options[:drop] = true
+      cookies.clear
     end
   end
 end

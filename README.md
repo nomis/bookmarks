@@ -15,5 +15,5 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 * Bookmarks are intended to be publicly visible
 * Read-only unless logged in
 * Single user so no self-registration
-* No cookies, except on **successful** login
+* No cookies, except for user login
 * All functionality must work without JavaScript
