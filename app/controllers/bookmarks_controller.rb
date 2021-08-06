@@ -142,20 +142,21 @@ class BookmarksController < ApplicationController
   end
 
   # Load bookmarks for index, search or incremental output
-  def load_bookmarks(tags = nil)
+  def load_bookmarks(tags_param = nil)
+    filter_tags = tags_param ? Set.new(tags_param.split(",").map(&:to_i)) : Set.new()
+
     @bookmarks = Bookmark.for_user(user_signed_in?)
-    bookmark_tags = BookmarkTag.for_user(user_signed_in?)
-    filter_tags = tags ? Set.new(tags.split(",").map { |tag| Integer(tag) }) : Set.new()
+    tags = Tag.for_user(user_signed_in?)
 
     if !filter_tags.empty?
       validate_search(filter_tags)
       return false unless canonical_search(filter_tags)
 
       @bookmarks = @bookmarks.with_tags(filter_tags)
-      bookmark_tags = bookmark_tags.with_tags(filter_tags)
+      tags = tags.common_tags(filter_tags)
     end
 
-    @list = ListFacade.new(params, @bookmarks, bookmark_tags, filter_tags)
+    @list = ListFacade.new(params, @bookmarks, tags, filter_tags)
     true
   end
 

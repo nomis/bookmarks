@@ -5,16 +5,17 @@
 class TagFacade
   MAX_TAGS = Rails.configuration.x.maximum_tags
 
-  attr_reader :count
-
-  def initialize(tag, search_tags = Set.new, count = nil)
+  def initialize(tag, search_tags = Set.new)
     @tag = tag
     @search_tags = search_tags
-    @count = count
   end
 
   def name
     @tag.name
+  end
+
+  def count
+    @tag.count
   end
 
   def search_match?

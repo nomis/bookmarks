@@ -9,7 +9,7 @@ class ListFacade
 
   def initialize(params, bookmarks, tags, search_tags = Set.new)
     @params = params
-    @tags = tags.count_tags
+    @tags = tags.with_count.order(:key)
     # TODO: This shouldn't need to fetch the tags, because they have already been fetched above
     @pagination, @bookmarks = pagy(bookmarks.order(created_at: :desc).order(:id).includes(:tags))
     @search_tags = search_tags
@@ -20,7 +20,7 @@ class ListFacade
   end
 
   def tags
-    @tag_facades ||= @tags.map { |tag, count| TagFacade.new(tag, @search_tags, count) }
+    @tag_facades ||= @tags.map { |tag| TagFacade.new(tag, @search_tags) }
   end
 
   def search_tags
@@ -32,7 +32,7 @@ class ListFacade
   end
 
   def empty?
-    @tags.empty?
+    bookmarks.empty?
   end
 
   private

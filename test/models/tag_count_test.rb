@@ -1,6 +1,6 @@
 require "test_helper"
 
-class BookmarkTagTest < ActiveSupport::TestCase
+class TagCountTest < ActiveSupport::TestCase
   setup do
     @one = bookmarks(:one)
     @two = bookmarks(:two)
@@ -34,7 +34,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
         ["test2", 1],
         ["test3", 1],
         ["test4", 1],
-      ], BookmarkTag.count_tags.map { |tag, count| [tag.name, count] })
+      ], Tag.with_count.order(:key).map { |tag| [tag.name, tag.count] })
   end
 
   test "count tags for user" do
@@ -47,7 +47,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
       ["test2", 1],
       ["test3", 1],
       ["test4", 1],
-    ], BookmarkTag.for_user(true).count_tags.map { |tag, count| [tag.name, count] })
+    ], Tag.for_user(true).with_count.order(:key).map { |tag| [tag.name, tag.count] })
   end
 
   test "count tags for guest" do
@@ -57,7 +57,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
       ["shared2", 1],
       ["test1", 1],
       ["test2", 1],
-    ], BookmarkTag.for_user(false).count_tags.map { |tag, count| [tag.name, count] })
+    ], Tag.for_user(false).with_count.order(:key).map { |tag| [tag.name, tag.count] })
   end
 
   test "count filtered tags" do
@@ -69,7 +69,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
         ["shared1", 2],
         ["test1", 1],
         ["test3", 1],
-      ], BookmarkTag.with_tags(tags1).count_tags.map { |tag, count| [tag.name, count] })
+      ], Tag.common_tags(tags1).with_count.order(:key).map { |tag| [tag.name, tag.count] })
 
     tags2 = Set.new(Tag.where(name: "shared2").pluck(:id))
 
@@ -79,7 +79,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
         ["shared2", 2],
         ["test2", 1],
         ["test4", 1],
-      ], BookmarkTag.with_tags(tags2).count_tags.map { |tag, count| [tag.name, count] })
+      ], Tag.common_tags(tags2).with_count.order(:key).map { |tag| [tag.name, tag.count] })
   end
 
   test "count filtered tags for user" do
@@ -91,7 +91,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
         ["shared1", 2],
         ["test1", 1],
         ["test3", 1],
-      ], BookmarkTag.for_user(true).with_tags(tags1).count_tags.map { |tag, count| [tag.name, count] })
+      ], Tag.for_user(true).common_tags(tags1).with_count.order(:key).map { |tag| [tag.name, tag.count] })
 
     tags2 = Set.new(Tag.where(name: "shared2").pluck(:id))
 
@@ -101,7 +101,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
         ["shared2", 2],
         ["test2", 1],
         ["test4", 1],
-      ], BookmarkTag.for_user(true).with_tags(tags2).count_tags.map { |tag, count| [tag.name, count] })
+      ], Tag.for_user(true).common_tags(tags2).with_count.order(:key).map { |tag| [tag.name, tag.count] })
   end
 
   test "count filtered tags for guest" do
@@ -111,7 +111,7 @@ class BookmarkTagTest < ActiveSupport::TestCase
         ["common", 1],
         ["shared1", 1],
         ["test1", 1],
-      ], BookmarkTag.for_user(false).with_tags(tags1).count_tags.map { |tag, count| [tag.name, count] })
+      ], Tag.for_user(false).common_tags(tags1).with_count.order(:key).map { |tag| [tag.name, tag.count] })
 
     tags2 = Set.new(Tag.where(name: "shared2").pluck(:id))
 
@@ -119,6 +119,6 @@ class BookmarkTagTest < ActiveSupport::TestCase
         ["common", 1],
         ["shared2", 1],
         ["test2", 1],
-      ], BookmarkTag.for_user(false).with_tags(tags2).count_tags.map { |tag, count| [tag.name, count] })
+      ], Tag.for_user(false).common_tags(tags2).with_count.order(:key).map { |tag| [tag.name, tag.count] })
   end
 end
