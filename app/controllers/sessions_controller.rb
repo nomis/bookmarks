@@ -11,6 +11,11 @@ class SessionsController < Devise::SessionsController
     end
   end
 
+  def destroy
+    current_user.invalidate_all_sessions!
+    super
+  end
+
   protected
 
   def validate_sign_out?

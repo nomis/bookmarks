@@ -4,10 +4,10 @@
 
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
-  # :registerable, :timeoutable and :omniauthable
+  # :registerable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :confirmable, :lockable, :trackable
+         :confirmable, :lockable, :trackable, :timeoutable
 
   attr_writer :login
 
@@ -27,5 +27,16 @@ class User < ApplicationRecord
     elsif conditions.has_key?(:username) || conditions.has_key?(:email)
       where(conditions.to_h).first
     end
+  end
+
+  def authenticatable_salt
+    if session_token.nil?
+      invalidate_all_sessions!
+    end
+    session_token
+  end
+
+  def invalidate_all_sessions!
+    update_attribute(:session_token, SecureRandom.hex)
   end
 end

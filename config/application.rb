@@ -40,5 +40,7 @@ module Bookmarks
     config.action_dispatch.ignore_accept_header = true
 
     config.x.maximum_tags = 100
+
+    config.action_dispatch.cookies_same_site_protection = :strict
   end
 end
