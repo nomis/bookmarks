@@ -6,6 +6,8 @@ class BookmarkVisibilityTest < ActiveSupport::TestCase
     @two = bookmarks(:two)
     @three = bookmarks(:three)
     @four = bookmarks(:four)
+    @five = bookmarks(:five)
+    @six = bookmarks(:six)
 
     @one.tags_string = "common test1 shared1"
     @one.private = false
@@ -22,18 +24,23 @@ class BookmarkVisibilityTest < ActiveSupport::TestCase
     @four.tags_string = "common test4 shared2 private"
     @four.private = true
     assert @four.save
+
+    # @five is public
+
+    @six.private = true
+    assert @six.save
   end
 
   test "all bookmarks" do
-    assert_equal(Set.new(["One", "Two", "Three", "Four"]), Set.new(Bookmark.all.pluck(:title)))
+    assert_equal(Set.new(["One", "Two", "Three", "Four", "Five", "Six"]), Set.new(Bookmark.all.pluck(:title)))
   end
 
   test "all bookmarks for user" do
-    assert_equal(Set.new(["One", "Two", "Three", "Four"]), Set.new(Bookmark.for_user(true).pluck(:title)))
+    assert_equal(Set.new(["One", "Two", "Three", "Four", "Five", "Six"]), Set.new(Bookmark.for_user(true).pluck(:title)))
   end
 
   test "all bookmarks for guest" do
-    assert_equal(Set.new(["One", "Two"]), Set.new(Bookmark.for_user(false).pluck(:title)))
+    assert_equal(Set.new(["One", "Two", "Five"]), Set.new(Bookmark.for_user(false).pluck(:title)))
   end
 
   test "filtered bookmarks" do

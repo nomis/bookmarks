@@ -15,3 +15,11 @@ three:
 four:
   title: Four
   uri: https://four.example.com/
+
+five:
+  title: Five
+  uri: https://five.example.com/
+
+six:
+  title: Six
+  uri: https://six.example.com/
