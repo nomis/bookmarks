@@ -9,7 +9,7 @@
 	<li><%= link_to "New", new_bookmark_path, rel: "nofollow", class: "new" %></li>
 	<li><%= link_to "🔖", bookmarklet_uri, title: "Bookmarklet to create a new bookmark", rel: "nofollow", class: "bookmarklet" %></li>
 <% end %>
-	<li><a href="#main" class="skip">Skip to content</a></li>
+	<li><%= link_to "Skip to content", "#main", class: "skip" %></li>
 <% if user_signed_in? %>
 	<li><%= link_to "Edit user", edit_user_registration_path, rel: "nofollow", class: "account" %></li>
 	<li><%= link_to "Logout", destroy_user_session_path(request_forgery_protection_token => form_authenticity_token), rel: "nofollow", class: "logout" %></li>
