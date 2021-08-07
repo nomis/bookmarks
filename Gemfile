@@ -60,7 +60,7 @@ gem 'with_advisory_lock', '~> 4.6.0'
 # Misc
 gem 'natural_sort', '~> 0.3.0'
 
-# Performance checking while running tests
+# Performance checking while developing
 gem 'bullet'
 
 # Authentication
@@ -68,3 +68,7 @@ gem 'devise', '~> 4.8.0'
 
 # Pagination
 gem 'pagy', '~> 4.10.1'
+
+# HTTP client/parser
+gem 'http', '~> 4.4.1'
+gem 'nokogiri', '~> 1.11.1'

@@ -8,7 +8,8 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 * Bookmarks may be tagged
 	* Tags are separated by spaces
 	* Tags cannot contain spaces
-	* All tags share the same
+    * Tags are case-insensitive
+	* All tags share the same case
 * Incremental searching by filtering on tags
 	* Provide a list of all possible tags
 	* Clicking on a tag adds or removes it from the filter
@@ -16,7 +17,12 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 * Read-only unless logged in
 * Single user so no self-registration
 * No cookies, except for user login
-* All functionality must work without JavaScript
+* All basic functionality must work without JavaScript
+
+## Features
+
+* Lookup the title of pasted URLs server-side (for mobile clients that
+  can't support bookmarklets)
 
 ## Copyright
 

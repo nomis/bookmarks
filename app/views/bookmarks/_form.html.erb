@@ -22,6 +22,7 @@
 	<p class="field">
 		<%= form.label :uri, Bookmark.human_attribute_name(:uri) + ":" %>
 		<%= form.text_field :uri, autocomplete: "off" %>
+		<span id="bookmark_uri_error" class="remote_error"></span>
 	</p>
 
 	<p class="field">
@@ -40,3 +41,6 @@
 		<%= form.submit %>
 	</p>
 <% end %>
+<script type="text/javascript">
+Bookmarks.setupPasteURI("bookmark_uri", "bookmark_title", "bookmark_uri_error");
+</script>

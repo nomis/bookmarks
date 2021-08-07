@@ -4,7 +4,7 @@
 // that code so it'll be compiled.
 
 import Rails from "@rails/ujs"
-import * as Bookmarks from "bookmarks"
+import * as Bookmarks from "bookmarks.js.erb"
 
 Rails.start()
 

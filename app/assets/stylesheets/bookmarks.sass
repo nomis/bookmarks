@@ -4,6 +4,26 @@
 .no_css
 	display: none
 
+form.wide
+	max-width: 50ch
+
+	.field, .field span
+		display: flex
+		flex-direction: column
+
+		input
+			flex: 1
+
+	.field.inline, .field.inline span
+		display: inline
+
+p
+	max-width: 72ch
+
+.remote_error
+	color: #c00
+	font-size: smaller
+
 nav.pagination ul, ul.menu, ul.tags
 	display: flex
 	flex-wrap: wrap
@@ -209,3 +229,21 @@ nav.pagination ul
 		padding: 0 $padding 0 $padding
 
 		text-decoration-line: none
+
+input[type="text"]:disabled
+	background-image: repeating-linear-gradient(-45deg, #ff6, #ff6 5px, #999 5px, #999 10px)
+
+@mixin colourbg($colour)
+	background-image: linear-gradient($colour, $colour)
+	background-size: 1.5em
+	padding-left: 1.75em
+	background-repeat: no-repeat
+
+input[type="text"][data-lookup="success"]
+	@include colourbg(green)
+
+input[type="text"][data-lookup="pending"]
+	@include colourbg(#fc0)
+
+input[type="text"][data-lookup="error"]
+	@include colourbg(#c00)
