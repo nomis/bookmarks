@@ -34,4 +34,6 @@ available.
 
 <h2>Source code</h2>
 <p><%= link_to @source_code_name, @source_code_url %></p>
+<% if @scm_revision.present? %>
 <p>Revision: <samp><%= @scm_revision %></samp><% if @scm_description.present? %> (<samp><%= @scm_description %></samp>)<% end %></p>
+<% end %>
