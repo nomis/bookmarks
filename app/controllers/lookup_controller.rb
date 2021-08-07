@@ -18,7 +18,7 @@ class LookupController < ApplicationController
       client = HTTP.timeout(connect: 4, read: 4).follow
 
       begin
-        response = "".dup
+        response = +""
 
         client.get(params[:uri]).body.each do |chunk|
           response << chunk
