@@ -39,7 +39,7 @@ module Bookmarks
     # Rails (6.1.1) does not set Vary: correctly, so Accept: must be ignored
     config.action_dispatch.ignore_accept_header = true
 
-    config.x = OpenStruct.new(YAML.load_file(Rails.root.join("config/bookmarks.yml"))[Rails.env])
+    config.x = OpenStruct.new(YAML.load_file(Rails.root.join("config", "bookmarks.yml"))[Rails.env])
     Rails.application.default_url_options = config.x.base_url.to_hash.deep_symbolize_keys
     config.x.scm_revision = `git rev-parse HEAD`.strip
     config.x.scm_description = `git describe --dirty=+`.strip
