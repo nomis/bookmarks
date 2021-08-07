@@ -21,8 +21,19 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 
 ## Features
 
-* Lookup the title of pasted URLs server-side (for mobile clients that
-  can't support bookmarklets)
+* Lookup the title of pasted URLs server-side (for mobile clients that can't
+  support bookmarklets)
+
+## Install
+
+* Standard Ruby on Rails application
+* Application-specific configuration is in [](config/bookmarks.yml)
+  * The `base_url` must be configured for email and bookmarklet links to work
+  * The `source_code_url` must be changed if you modify the application (and you
+    must publish the running source code)
+* Set up your user by editing [](db/seeds/users.rb.example), saving it as
+  [](db/seeds/users.rb) and run `rails db:seed:users` to load it (or use the
+  console)
 
 ## Copyright
 
