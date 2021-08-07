@@ -37,6 +37,6 @@ class User < ApplicationRecord
   end
 
   def invalidate_all_sessions!
-    update_attribute(:session_token, SecureRandom.hex)
+    update_attribute(:session_token, SecureRandom.base58(64))
   end
 end
