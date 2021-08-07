@@ -25,9 +25,9 @@ xml.xbel(version: "1.0",
 					end
 					if user_signed_in?
 						if bookmark.private?
-							xml.private
+							xml.tag!("a:private".freeze)
 						else
-							xml.public
+							xml.tag!("a:public".freeze)
 						end
 					end
 				end
