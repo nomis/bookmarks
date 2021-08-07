@@ -39,7 +39,8 @@ module Bookmarks
     # Rails (6.1.1) does not set Vary: correctly, so Accept: must be ignored
     config.action_dispatch.ignore_accept_header = true
 
-    config.x.maximum_tags = 100
+    config.x = OpenStruct.new(YAML.load_file(Rails.root.join("config/bookmarks.yml"))[Rails.env])
+    Rails.application.default_url_options = config.x.base_url.to_hash.deep_symbolize_keys
 
     config.action_dispatch.cookies_same_site_protection = :strict
   end

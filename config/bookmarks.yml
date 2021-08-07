@@ -1,0 +1,19 @@
+defaults: &defaults
+  maximum_tags: 100
+
+development:
+  <<: *defaults
+  base_url:
+    host: localhost
+    port: 3000
+
+test:
+  <<: *defaults
+  base_url:
+    host: bookmarks.test
+
+production:
+  <<: *defaults
+  base_url:
+    protocol: https
+    host: bookmarks.uuid.uk
