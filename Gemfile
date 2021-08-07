@@ -72,3 +72,6 @@ gem 'pagy', '~> 4.10.1'
 # HTTP client/parser
 gem 'http', '~> 4.4.1'
 gem 'nokogiri', '~> 1.11.1'
+
+# Improve XML escaping performance
+gem 'fast_xs', '~> 0.8.0'
