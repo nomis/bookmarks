@@ -9,5 +9,8 @@ class AboutController < ApplicationController
   def source
     @source_code_name = Rails.configuration.x.source_code_name
     @source_code_url = Rails.configuration.x.source_code_url
+
+    @scm_revision = Rails.configuration.x.scm_revision
+    @scm_description = Rails.configuration.x.scm_description
   end
 end

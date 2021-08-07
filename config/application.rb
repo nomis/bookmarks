@@ -41,6 +41,8 @@ module Bookmarks
 
     config.x = OpenStruct.new(YAML.load_file(Rails.root.join("config/bookmarks.yml"))[Rails.env])
     Rails.application.default_url_options = config.x.base_url.to_hash.deep_symbolize_keys
+    config.x.scm_revision = `git rev-parse HEAD`.strip
+    config.x.scm_description = `git describe --dirty=+`.strip
 
     config.action_dispatch.cookies_same_site_protection = :strict
   end
