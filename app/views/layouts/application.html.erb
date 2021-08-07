@@ -3,6 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 %>
 <!DOCTYPE html>
+<!--
+<%== render("about/copyright.txt", full: true).to_str.strip.gsub("--", "\u2010\u2010").indent(1, "\t") %>
+-->
 <html>
 	<head>
 		<title>Bookmarks<%= (": " + yield(:title) unless yield(:title).blank?).to_s %></title>

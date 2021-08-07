@@ -1,6 +1,16 @@
 defaults: &defaults
   maximum_tags: 100
 
+  # Notwithstanding any other provision of this License, if you modify the
+  # Program, your modified version must prominently offer all users
+  # interacting with it remotely through a computer network (if your version
+  # supports such interaction) an opportunity to receive the Corresponding
+  # Source of your version by providing access to the Corresponding Source
+  # from a network server at no charge, through some standard or customary
+  # means of facilitating copying of software.
+  source_code_name: Git repository
+  source_code_url: https://github.com/nomis/bookmarks
+
 development:
   <<: *defaults
   base_url:

@@ -196,11 +196,4 @@ class BookmarksController < ApplicationController
       true
     end
   end
-
-  # Delete all cookies unless signed in
-  def delete_cookies
-    if !user_signed_in?
-      helpers.delete_cookies!
-    end
-  end
 end
