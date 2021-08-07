@@ -8,6 +8,10 @@ nav.pagination ul, ul.menu, ul.tags
 	display: flex
 	flex-wrap: wrap
 
+	li
+		list-style: none
+
+nav.pagination ul
 	margin: 0
 	padding: 0
 
@@ -15,21 +19,31 @@ nav.pagination ul, ul.menu, ul.tags
 		margin: 0
 		padding: 0
 
-		list-style: none
-
 ul.menu
-	li:before
-		content: "\00A0 | "
+	$pad_links: 1ch
+	$pad_lines: 5pt
 
-	li:first-child:before
-		content: ""
+	margin: 0 0 (-($pad_lines)) 0
+	padding: 0
+
+	li
+		margin: 0 0 $pad_lines $pad_links
+		padding: 0 0 0 $pad_links
+
+		border-left: 1px solid #000
+
+	li:first-child
+		border-left: none
+		margin-left: 0
+		padding-left: 0
 
 ul.item.menu
-	li:before
-		content: "\00A0"
+	li
+		padding-left: 1ch
 
-	li:first-child:before
-		content: ""
+	li:first-child
+		padding-left: 0
+
 
 @mixin tags($tagfg, $tagbg, $tagfg_active, $weight)
 	$tagbg_active: $tagbg
@@ -38,10 +52,12 @@ ul.item.menu
 	$padding: 2pt
 	$clearance: $border + max($padding, $outline)
 
-	margin-bottom: (-($clearance))
+	margin: 0 0 (-($clearance)) 0
+	padding: 0
 
 	li
 		margin: $clearance $clearance $clearance 0
+		padding: 0
 
 		color: $tagfg
 		background-color: $tagbg
