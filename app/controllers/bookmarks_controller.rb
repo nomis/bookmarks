@@ -200,8 +200,7 @@ class BookmarksController < ApplicationController
   # Delete all cookies unless signed in
   def delete_cookies
     if !user_signed_in?
-      request.session_options[:drop] = true
-      cookies.clear
+      helpers.delete_cookies!
     end
   end
 end

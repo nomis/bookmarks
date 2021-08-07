@@ -67,4 +67,20 @@ module ApplicationHelper
               end
       html << %(</ul></nav>)
   end
+
+  def session_active?
+    !request.session_options[:drop]
+  end
+
+  def delete_cookies!
+    # Mark the session to be dropped
+    request.session_options[:drop] = true
+
+    # Mark all cookies to be deleted
+    cookies.clear
+
+    # If there is an uncommitted session,
+    # this can override the cookie deletion
+    # and recreate the session cookie
+  end
 end

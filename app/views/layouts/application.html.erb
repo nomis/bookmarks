@@ -10,7 +10,7 @@
 		<meta name="robots" content="<%= yield(:robots) %>">
 		<% end %>
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<% if !request.session_options[:drop] %>
+		<% if session_active? %>
 			<%= csrf_meta_tags %>
 			<%= csp_meta_tag %>
 		<% end %>
