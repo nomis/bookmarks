@@ -27,6 +27,7 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 ## Install
 
 * Standard Ruby on Rails application
+* Generate a production `secret_key_base` by running `rails credentials:edit`
 * Application-specific configuration is in [](config/bookmarks.yml)
   * The `base_url` must be configured for email and bookmarklet links to work
   * The `source_code_url` must be changed if you modify the application (and you
