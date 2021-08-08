@@ -28,13 +28,16 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 
 * Standard Ruby on Rails application
 * Generate a production `secret_key_base` by running `rails credentials:edit`
+* Create a PostgreSQL database (setting `PGDATABASE`, etc. if required) and run
+  `rails db:migrate` to create the tables
 * Application-specific configuration is in [](config/bookmarks.yml)
   * The `base_url` must be configured for email and bookmarklet links to work
   * The `source_code_url` must be changed if you modify the application (and you
     must publish the running source code)
 * Set up your user by editing [](db/seeds/users.rb.example), saving it as
   [](db/seeds/users.rb) and run `rails db:seed:users` to load it (or use the
-  console)
+  `rails console`)
+* There is an example systemd user service in [](systemd/rails.service)
 
 ## Copyright
 
