@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 
 class LookupController < ApplicationController
-  MAX_LENGTH = 256 * 1024
+  MAX_LENGTH = 1.megabyte
 
   before_action :authenticate_user!
   before_action :delete_cookies
@@ -20,15 +20,18 @@ class LookupController < ApplicationController
 
     Timeout::timeout(5) do
       client = HTTP.timeout(connect: 4, read: 4)
+        .nodelay
         .follow(max_hops: 3)
         .use({
-          instrumentation: {
-            instrumenter: LookupValidator::Instrumenter.new,
+            instrumentation: {
+              instrumenter: LookupValidator::Instrumenter.new,
+            },
+            normalize_uri: {
+              normalizer: LookupNormaliser::NORMALISER,
+            },
           },
-          normalize_uri: {
-            normalizer: LookupNormaliser::NORMALISER,
-          },
-        })
+          :auto_inflate)
+        .headers("Accept-Encoding" => "gzip")
       client = client.headers("User-Agent" => user_agent) if user_agent.present?
       content = get_partial_response(client, uri)
 
