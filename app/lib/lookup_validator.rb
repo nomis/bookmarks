@@ -19,7 +19,7 @@ module LookupValidator
     def start(name, payload)
       if name == "start_request.http"
         uri = payload[:request].uri
-        raise ProhibitedURIError.new(uri) if !LookupValidator.uri_allowed?(uri)
+        raise ProhibitedURIError.new(uri) unless LookupValidator.uri_allowed?(uri)
       end
     end
   end
