@@ -1,3 +1,14 @@
+GIT
+  remote: https://github.com/nomis/http
+  revision: 04576ed20d682a2fc12ac91e637545322ab36162
+  branch: use_features_on_follow-4
+  specs:
+    http (4.4.1)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 2.2)
+      http-parser (~> 1.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -98,11 +109,6 @@ GEM
       rake
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    http (4.4.1)
-      addressable (~> 2.3)
-      http-cookie (~> 1.0)
-      http-form_data (~> 2.2)
-      http-parser (~> 1.2.0)
     http-cookie (1.0.4)
       domain_name (~> 0.5)
     http-form_data (2.3.0)
@@ -248,7 +254,7 @@ DEPENDENCIES
   capybara (>= 3.26)
   devise (~> 4.8.0)
   fast_xs (~> 0.8.0)
-  http (~> 4.4.1)
+  http!
   jbuilder (~> 2.7)
   listen (~> 3.3)
   natural_sort (~> 0.3.0)
