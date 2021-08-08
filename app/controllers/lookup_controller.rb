@@ -48,13 +48,13 @@ class LookupController < ApplicationController
       format.json { render json: data }
     end
   rescue Timeout::Error, HTTP::TimeoutError => e
-    render(status: :gateway_timeout, json: "#{e.class}: #{e.message}")
+    render(status: :gateway_timeout, json: nice_error_message(e))
   rescue HTTP::Error, OpenSSL::SSL::SSLError => e
-    render(status: :service_unavailable, json: "#{e.class}: #{e.message}")
+    render(status: :service_unavailable, json: nice_error_message(e))
   rescue URI::InvalidURIError,
       Addressable::URI::InvalidURIError,
       LookupValidator::ProhibitedURIError => e
-    render(status: :bad_request, json: "#{e.class.name.demodulize}: #{e.message}")
+    render(status: :bad_request, json: nice_error_message(e))
   end
 
   protected
@@ -70,5 +70,18 @@ class LookupController < ApplicationController
     data
   ensure
     client.close
+  end
+
+  def nice_error_message(e)
+    klass = e.class.to_s
+    message = e.message.to_s
+
+    if klass.ends_with?("URIError")
+      "#{klass.demodulize}: #{message}"
+    elsif klass != message
+      "#{klass}: #{message}"
+    else
+      message
+    end
   end
 end
