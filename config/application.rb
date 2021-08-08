@@ -35,6 +35,7 @@ module Bookmarks
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.autoload_paths << Rails.root.join("app", "facades")
+    config.autoload_paths << Rails.root.join("app", "lib")
 
     # Rails (6.1.1) does not set Vary: correctly, so Accept: must be ignored
     config.action_dispatch.ignore_accept_header = true

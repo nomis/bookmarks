@@ -3,47 +3,44 @@
 # frozen_string_literal: true
 
 class LookupController < ApplicationController
-  MAX_LENGTH = 64 * 1024
+  MAX_LENGTH = 256 * 1024
 
   before_action :authenticate_user!
   before_action :delete_cookies
 
   # GET /url.json
   def url
-    render(status: :bad_request, json: "Missing URI") and return unless params[:uri]
+    uri = params[:uri]
+
+    render(status: :bad_request, json: "Missing URI") and return unless uri.present?
+    render(status: :bad_request, json: "Prohibited URI") and return unless LookupValidator.uri_allowed?(uri)
 
     data = {}
 
     Timeout::timeout(5) do
       client = HTTP.timeout(connect: 4, read: 4)
-        .follow
+        .follow(max_hops: 3)
         .use({
+          instrumentation: {
+            instrumenter: LookupValidator::Instrumenter.new,
+          },
           normalize_uri: {
-            normalizer: lambda(&:itself),
+            normalizer: LookupNormaliser::NORMALISER,
           },
         })
+      client = client.headers("User-Agent" => user_agent) if user_agent.present?
+      content = get_partial_response(client, uri)
 
-      begin
-        response = +""
+      page = Nokogiri::HTML(content)
+      titles = page.css("title")
 
-        client.get(params[:uri]).body.each do |chunk|
-          response << chunk
-          break if response.length >= MAX_LENGTH
-        end
-
-        page = Nokogiri::HTML(response)
-        titles = page.css("title")
-
-        if titles.length < 1
-          render(status: :bad_gateway,
-            json: "Page has no title in the first #{helpers.pluralize(response.length, "byte")}")
-          return
-        end
-
-        data["title"] = titles[0].text
-      ensure
-        client.close
+      if titles.length < 1
+        render(status: :bad_gateway,
+          json: "Page has no title in the first #{helpers.pluralize(content.length, "byte")}")
+        return
       end
+
+      data["title"] = titles[0].text
     end
 
     respond_to do |format|
@@ -51,7 +48,26 @@ class LookupController < ApplicationController
     end
   rescue Timeout::Error, HTTP::TimeoutError => e
     render(status: :gateway_timeout, json: "#{e.class}: #{e.message}")
-  rescue HTTP::Error => e
+  rescue HTTP::Error, OpenSSL::SSL::SSLError => e
     render(status: :service_unavailable, json: "#{e.class}: #{e.message}")
+  rescue URI::InvalidURIError,
+      Addressable::URI::InvalidURIError,
+      LookupValidator::ProhibitedURIError => e
+    render(status: :bad_request, json: "#{e.class.name.demodulize}: #{e.message}")
+  end
+
+  protected
+
+  def get_partial_response(client, uri)
+    data = +""
+
+    client.get(uri).body.each do |chunk|
+      data << chunk
+      break if data.length >= MAX_LENGTH
+    end
+
+    data
+  ensure
+    client.close
   end
 end
