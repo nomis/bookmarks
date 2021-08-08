@@ -1,2 +1,2 @@
 <%= "-- " %>
-<%= Etc.getpwnam(Etc.getlogin).gecos.split(/,/).first %>
+<%= Etc.getpwuid.gecos.split(/,/).first %>

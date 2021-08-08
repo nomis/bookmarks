@@ -3,6 +3,6 @@
 # frozen_string_literal: true
 
 class ApplicationMailer < ActionMailer::Base
-  default from: "#{Etc.getpwnam(Etc.getlogin).gecos.split(/,/).first} <#{Etc.getlogin}@#{Socket.gethostbyname(Socket.gethostname).first}>"
+  default from: "#{Etc.getpwuid.gecos.split(/,/).first} <#{Etc.getpwuid.name}@#{Socket.gethostbyname(Socket.gethostname).first}>"
   layout "mailer"
 end
