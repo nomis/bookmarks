@@ -15,7 +15,13 @@ class LookupController < ApplicationController
     data = {}
 
     Timeout::timeout(5) do
-      client = HTTP.timeout(connect: 4, read: 4).follow
+      client = HTTP.timeout(connect: 4, read: 4)
+        .follow
+        .use({
+          normalize_uri: {
+            normalizer: lambda(&:itself),
+          },
+        })
 
       begin
         response = +""
