@@ -56,6 +56,10 @@ Rails.application.configure do
   # information to avoid inadvertent exposure of personally identifiable information (PII).
   config.log_level = :info
 
+  if ENV["RAILS_LOG_LEVEL"].present?
+    config.log_level = ENV["RAILS_LOG_LEVEL"].to_sym
+  end
+
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
