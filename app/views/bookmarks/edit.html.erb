@@ -6,7 +6,7 @@ content_for :title, "Edit #" + @bookmark.id.to_s
 content_for :robots, "noindex"
 %>
 <h1>Editing Bookmark</h1>
-<%= render "form", bookmark: @bookmark %>
+<%= render partial: "form", locals: { bookmark: @bookmark } %>
 <ul class="menu">
 	<li><%= link_to "Reset", edit_bookmark_path(@bookmark), rel: "nofollow", class: "reset" %></li>
 	<li><%= link_to "Back", bookmark_path(@bookmark), rel: "nofollow", class: "back" %></li>

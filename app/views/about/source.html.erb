@@ -13,7 +13,7 @@ bookmarks website and not the content itself.
 
 <h2>Copyright notice</h2>
 <pre>
-<%= render("about/copyright.txt", full: false).to_str.strip %>
+<%= render(partial: "about/copyright", formats: :txt, locals: { full: false }).to_str.strip %>
 </pre>
 
 <h2>Licence</h2>

@@ -38,7 +38,7 @@
 <% if @list.bookmarks.present? %>
 <h2>Bookmarks</h2>
 <ol id="bookmarks" class="bookmarks" start="<%= @list.pagination.offset + 1 %>">
-	<%= render "list_bookmarks" %>
+	<%= render partial: "list_bookmarks" %>
 </ol>
 <% else %>
 <p>No bookmarks.</p>
@@ -46,7 +46,7 @@
 </main>
 <footer>
 <div id="pagination">
-	<%= render "list_pagination" %>
+	<%= render partial: "list_pagination" %>
 </div>
 <% if @list.pagination.pages > 1 %>
 <script type="text/javascript">

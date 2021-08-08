@@ -6,7 +6,7 @@ content_for :title, "New"
 content_for :robots, "noindex"
 %>
 <h1>New Bookmark</h1>
-<%= render "form", bookmark: @bookmark %>
+<%= render partial: "form", locals: { bookmark: @bookmark } %>
 <ul class="menu">
 	<li><%= link_to "Reset", new_bookmark_path, rel: "nofollow", class: "reset" %></li>
 	<li><%= link_to "Back", root_path, class: "back" %></li>
