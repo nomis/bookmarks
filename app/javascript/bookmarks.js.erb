@@ -73,7 +73,8 @@ function onPasteURI(src, dst, msg, event) {
 		Rails.ajax({
 			url: "<%= Rails.application.routes.url_helpers.lookup_url_path(format: "json") %>",
 			type: "get",
-			data: "uri=" + encodeURIComponent(uri),
+			data: "uri=" + encodeURIComponent(uri)
+				+ "&user_agent=" + encodeURIComponent(navigator.userAgent),
 			dataType: "json",
 			success: function(data) {
 				dst.disabled = false;

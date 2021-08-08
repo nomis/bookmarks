@@ -11,6 +11,7 @@ class LookupController < ApplicationController
   # GET /url.json
   def url
     uri = params[:uri]
+    user_agent = params[:user_agent]
 
     render(status: :bad_request, json: "Missing URI") and return unless uri.present?
     render(status: :bad_request, json: "Prohibited URI") and return unless LookupValidator.uri_allowed?(uri)
