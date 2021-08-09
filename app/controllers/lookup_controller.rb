@@ -17,7 +17,7 @@ class LookupController < ApplicationController
     end
   rescue Timeout::Error, HTTP::TimeoutError => e
     render(status: :gateway_timeout, json: nice_error_message(e))
-  rescue HTTP::Error, OpenSSL::SSL::SSLError => e
+  rescue HTTP::Error, OpenSSL::SSL::SSLError, Zlib::Error => e
     render(status: :service_unavailable, json: nice_error_message(e))
   rescue URI::InvalidURIError,
       Addressable::URI::InvalidURIError,
