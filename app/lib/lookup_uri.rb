@@ -20,7 +20,7 @@ class LookupURI
   attr_reader :error
 
   def initialize(uri, user_agent = nil)
-    error = "Missing URI" and return unless uri.present?
+    self.error = "Missing URI" and return unless uri.present?
     raise LookupValidator::ProhibitedURIError.new(uri) unless LookupValidator.uri_allowed?(uri)
 
     @uri = uri
