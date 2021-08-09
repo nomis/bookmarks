@@ -41,7 +41,8 @@ class LookupURI
     self.error = "Missing URI" and return unless uri.present?
 
     @uri = uri
-    @client = HTTP.timeout(connect: 4, read: 4)
+    @client = HTTP
+      .timeout(connect: 4, read: 4)
       .nodelay
       .follow(max_hops: 3)
       .use({

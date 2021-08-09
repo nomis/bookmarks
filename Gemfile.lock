@@ -124,6 +124,7 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.0)
     minitest (5.14.4)
+    minitest-stub_any_instance (1.0.2)
     msgpack (1.4.2)
     natural_sort (0.3.0)
     nio4r (2.5.8)
@@ -247,6 +248,7 @@ DEPENDENCIES
   http (~> 4.4.1)
   jbuilder (~> 2.7)
   listen (~> 3.3)
+  minitest-stub_any_instance
   natural_sort (~> 0.3.0)
   nokogiri (~> 1.11.1)
   pagy (~> 4.10.1)
