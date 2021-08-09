@@ -55,13 +55,15 @@ class LookupURI
     @client = @client.headers("User-Agent" => user_agent) if user_agent.present?
 
     Timeout::timeout(5) do
-      content = get_partial_response
+      content = read
 
       page = Nokogiri::HTML(content)
       titles = page.css("title")
 
       if titles.length > 0
         self.title = titles[0].text
+      elsif complete
+        self.error = "Page has no title"
       else
         self.error = "Page has no title in the first #{content.length} #{"byte".pluralize(content.length)}"
       end
@@ -79,14 +81,19 @@ class LookupURI
   protected
 
   attr_accessor :title
+  attr_accessor :complete
   attr_writer :error
 
-  def get_partial_response
+  def read
     data = +""
+    self.complete = true
 
     @client.get(@uri).body.each do |chunk|
       data << chunk
-      break if data.length >= MAX_LENGTH
+      if data.length >= MAX_LENGTH
+        self.complete = false
+        break
+      end
     end
 
     data

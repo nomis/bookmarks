@@ -60,7 +60,21 @@ class LookupURITest < ActionDispatch::IntegrationTest
 
     HTTP::Client.stub_any_instance(:perform, responses) do
       lookup = LookupURI.new("http://example.test")
-      assert_equal("Page has no title in the first 19 bytes", lookup.error)
+      assert_equal("Page has no title", lookup.error)
+      assert_equal({ "title" => nil }, lookup.data)
+      assert(!lookup.ok?)
+    end
+  end
+
+  test "missing title (truncated)" do
+    responses = make_responses({
+        "http://example.test/"  => redirect_response("https://example.test/"),
+        "https://example.test/" => chunked_response(["A" * 2.megabytes, "B" * 3.megabytes]),
+      })
+
+    HTTP::Client.stub_any_instance(:perform, responses) do
+      lookup = LookupURI.new("http://example.test")
+      assert_equal("Page has no title in the first 2097152 bytes", lookup.error)
       assert_equal({ "title" => nil }, lookup.data)
       assert(!lookup.ok?)
     end
