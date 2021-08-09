@@ -6,6 +6,8 @@ WorkingDirectory=/path/to/bookmarks/app
 Environment=RAILS_ENV=production
 Environment=RAILS_LOG_LEVEL=warn
 Environment=RAILS_SERVE_STATIC_FILES=1
+ExecStartPre=/path/to/bookmarks/app/bin/bundle install
+ExecStartPre=/path/to/bookmarks/app/bin/bundle clean
 ExecStartPre=/path/to/bookmarks/app/bin/rails assets:precompile
 ExecStart=/path/to/bookmarks/app/bin/rails server
 
