@@ -91,6 +91,10 @@ function onPasteURI(src, dst, msg, event) {
 			error: function(data) {
 				dst.disabled = false;
 
+				if (data["error"]) {
+					data = data["error"];
+				}
+
 				console.log(`Failed to get title for URL: ${data}`);
 
 				msg.innerText = data;
