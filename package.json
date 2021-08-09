@@ -3,10 +3,10 @@
   "private": true,
   "dependencies": {
     "@rails/ujs": "^6.0.0",
-    "@rails/webpacker": "5.2.1",
+    "@rails/webpacker": "^5.2.1",
     "rails-erb-loader": "^5.5.2"
   },
-  "version": "1.0.1",
+  "version": "1.0.5",
   "devDependencies": {
     "webpack-dev-server": "^3.11.1"
   }
