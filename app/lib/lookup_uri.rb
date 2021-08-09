@@ -5,32 +5,46 @@
 class LookupURI
   MAX_LENGTH = 1.megabyte
 
+  ALLOWED_SCHEMES = Set.new(["http", "https"]).freeze
+  ALLOWED_PORTS = Set.new([80, 443, 8080]).freeze
+
   NORMALISER = lambda do |uri|
     uri = HTTP::URI.parse(uri)
 
-    HTTP::URI.new(
+    uri = HTTP::URI.new(
       :scheme     => uri.normalized_scheme,
       :authority  => uri.normalized_authority,
       :path       => uri.path,
       :query      => uri.query,
       :fragment   => uri.fragment,
     )
+
+    if uri_allowed?(uri)
+      uri
+    else
+      raise ProhibitedURIError.new(uri)
+    end
+  end
+
+  class ProhibitedURIError < StandardError; end
+
+  def self.uri_allowed?(uri)
+    uri = HTTP::URI.parse(uri)
+
+    ALLOWED_SCHEMES.include?(uri.scheme) \
+      && ALLOWED_PORTS.include?(uri.port)
   end
 
   attr_reader :error
 
   def initialize(uri, user_agent = nil)
     self.error = "Missing URI" and return unless uri.present?
-    raise LookupValidator::ProhibitedURIError.new(uri) unless LookupValidator.uri_allowed?(uri)
 
     @uri = uri
     @client = HTTP.timeout(connect: 4, read: 4)
       .nodelay
       .follow(max_hops: 3)
       .use({
-          instrumentation: {
-            instrumenter: LookupValidator::Instrumenter.new,
-          },
           normalize_uri: {
             normalizer: NORMALISER,
           },

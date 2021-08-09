@@ -21,7 +21,7 @@ class LookupController < ApplicationController
     render(status: :service_unavailable, json: nice_error_message(e))
   rescue URI::InvalidURIError,
       Addressable::URI::InvalidURIError,
-      LookupValidator::ProhibitedURIError => e
+      LookupURI::ProhibitedURIError => e
     render(status: :bad_request, json: nice_error_message(e))
   end
 

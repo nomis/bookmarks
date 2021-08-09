@@ -70,7 +70,7 @@ gem 'devise', '~> 4.8.0'
 gem 'pagy', '~> 4.10.1'
 
 # HTTP client/parser
-gem 'http', '~> 4.4.1', git: 'https://github.com/nomis/http', tag: 'v4.4.1+issue-681' # https://github.com/httprb/http/issues/681
+gem 'http', '~> 4.4.1'
 gem 'nokogiri', '~> 1.11.1'
 
 # Improve XML escaping performance
