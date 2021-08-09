@@ -49,10 +49,10 @@ class NoCookiesTest < ActionDispatch::IntegrationTest
     response.headers["Set-Cookie"].split("\n").each do |line|
       assert_match(" max-age=0;", line)
     end
-    assert_includes(cookies.to_hash, "_bookmarks_session")
-    assert_equal("", cookies["_bookmarks_session"])
-    assert_includes(cookies.to_hash, "remember_user_token")
-    assert_equal("", cookies["remember_user_token"])
+    assert_equal({
+        "_bookmarks_session" => "",
+        "remember_user_token" => "",
+      }, cookies.to_hash)
 
     # Delete known test cookies
     cookies.to_hash.keys.map { |key| cookies.delete(key) }
@@ -72,9 +72,9 @@ class NoCookiesTest < ActionDispatch::IntegrationTest
     response.headers["Set-Cookie"].split("\n").each do |line|
       assert_match(" max-age=0;", line)
     end
-    assert_includes(cookies.to_hash, "_bookmarks_session")
-    assert_equal("", cookies["_bookmarks_session"])
-    assert_includes(cookies.to_hash, "remember_user_token")
-    assert_equal("", cookies["remember_user_token"])
+    assert_equal({
+        "_bookmarks_session" => "",
+        "remember_user_token" => "",
+      }, cookies.to_hash)
   end
 end
