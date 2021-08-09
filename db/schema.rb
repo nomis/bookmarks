@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_06_143241) do
+ActiveRecord::Schema.define(version: 2021_08_09_185323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2021_08_06_143241) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "private", default: false, null: false
     t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id", order: { created_at: :desc }
+    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id_where_public", order: { created_at: :desc }, where: "(private = false)"
     t.index ["uri"], name: "index_bookmarks_on_uri", unique: true
   end
 
