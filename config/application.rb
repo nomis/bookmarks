@@ -22,6 +22,24 @@ require "sprockets/railtie"
 Bundler.require(*Rails.groups)
 
 module Bookmarks
+  class CacheStaticContent
+    def initialize(app, pattern, cache_control)
+      @app = app
+      @pattern = pattern
+      @cache_control = cache_control
+    end
+
+    def call(env)
+      status, headers, response = @app.call(env)
+
+      if env["REQUEST_PATH"] =~ @pattern
+        headers["Cache-Control"] = @cache_control
+      end
+
+      [status, headers, response]
+    end
+  end
+
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
@@ -41,6 +59,16 @@ module Bookmarks
     config.action_dispatch.ignore_accept_header = true
 
     config.action_dispatch.cookies_same_site_protection = :strict
+
+    # Applied to all file requests, used if Cache-Control is not supported by the client
+    config.public_file_server.headers = {
+      "Expires" => 1.day.from_now.httpdate,
+    }
+
+    # Apply Cache-Control only to content that doesn't change
+    config.middleware.insert_before(ActionDispatch::Static,
+      CacheStaticContent, %r{^/(assets|packs[^/]*/js)/},
+      "maxage=#{10.years.to_i}, public, immutable")
 
     # Different databases have different types and expression syntax
     require "active_record/database_configurations"
