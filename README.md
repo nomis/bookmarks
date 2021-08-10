@@ -27,10 +27,14 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 ## Install
 
 * Standard Ruby on Rails application
-* Generate a production `secret_key_base` by running `rails credentials:edit`
-* Create a PostgreSQL database (setting `PGDATABASE`, etc. if required) and run
-  `rails db:migrate` to create the tables
-* Application-specific configuration is in [config/bookmarks.yml](config/bookmarks.yml)
+  * Install dependencies with `bundle install` and `yarn`
+  * Database configuration is in [config/database.yml](config/database.yml.sample)
+* Create a PostgreSQL database (setting `PGDATABASE`, etc. if required)
+* Run `bin/setup` or perform the following steps:
+  * Create sample configuration files by running `rails setup:config`
+  * Generate a production `secret_key_base` by running `rails credentials:edit`
+  * Create the database tables by running `rails db:prepare`
+* Application-specific configuration is in [config/bookmarks.yml](config/bookmarks.yml.sample)
   * The `base_url` must be configured for email and bookmarklet links to work
   * The `source_code_url` must be changed if you modify the application (and you
     must publish the running source code)
@@ -38,6 +42,7 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
   saving it as `db/seeds/users.rb` and run `rails db:seed:users` to load it (or
   use the `rails console` to create a new Devise User)
 * There is an example systemd user service in [systemd/rails.service](systemd/rails.service)
+* Production assets must be precompiled with `rails assets:precompile` before use
 
 ## Copyright
 

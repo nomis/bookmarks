@@ -40,7 +40,16 @@ module Bookmarks
     # Rails (6.1.1) does not set Vary: correctly, so Accept: must be ignored
     config.action_dispatch.ignore_accept_header = true
 
-    config.x = OpenStruct.new(YAML.load_file(Rails.root.join("config", "bookmarks.yml"))[Rails.env])
+    bm_def = YAML.load_file(Rails.root.join("config", "defaults", "bookmarks.yml"))
+    cfg_file = Rails.root.join("config", "bookmarks.yml")
+    cfg_file = Rails.root.join("config", "bookmarks.yml.sample") if !cfg_file.exist?
+    bm_cfg = YAML.load_file(cfg_file)[Rails.env]
+    config.x = OpenStruct.new(bm_def.deep_merge(bm_cfg))
+
+    if config.x.source_code_name.blank? || config.x.source_code_url.blank?
+      raise "Missing configuration of source code location"
+    end
+
     Rails.application.default_url_options = config.x.base_url.to_hash.deep_symbolize_keys
     config.x.scm_revision = `git rev-parse HEAD`.strip
     config.x.scm_description = `git describe --dirty=+`.strip
