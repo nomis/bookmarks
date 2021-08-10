@@ -21,8 +21,8 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 
 ## Features
 
-* Lookup the title of pasted URLs server-side (for mobile clients that can't
-  support bookmarklets)
+* Lookup the title of URLs server-side (automatically on paste for mobile
+  clients that can't support bookmarklets)
 
 ## Install
 
