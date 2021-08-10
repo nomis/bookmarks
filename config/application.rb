@@ -77,6 +77,12 @@ module Bookmarks
       .configs_for(env_name: Rails.env)[0].adapter
     config.paths["db"] = "db/schema/#{db_adapter}"
 
+    # Compress files with Brotli
+    config.assets.configure do |env|
+      env.register_exporter %w(text/css application/javascript image/svg+xml),
+        Sprockets::ExportersPack::BrotliExporter
+    end
+
     # Application config
     bm_def = YAML.load_file(Rails.root.join("config", "defaults", "bookmarks.yml"))
     cfg_file = Rails.root.join("config", "bookmarks.yml")

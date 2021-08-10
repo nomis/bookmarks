@@ -78,3 +78,6 @@ gem 'nokogiri', '~> 1.11.1'
 
 # Improve XML escaping performance
 gem 'fast_xs', '~> 0.8.0'
+
+# Compress .css with Brotli
+gem 'sprockets-exporters_pack', '~> 0.1.2'
