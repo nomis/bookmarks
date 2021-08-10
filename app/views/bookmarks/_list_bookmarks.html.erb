@@ -6,11 +6,11 @@
 	<li>
 		<%= link_to bookmark.title, bookmark.uri, class: "bookmark", referrerpolicy: "no-referrer" %><%
 			begin
-				uri = URI.parse(bookmark.uri)
+				uri = Addressable::URI.parse(bookmark.uri)
 				if uri.host
-					%> (<%= uri.host %>)<%
+					%> (<%= uri.normalized_host %>)<%
 				end
-			rescue URI::InvalidURIError
+			rescue Addressable::URI::InvalidURIError
 			end
 			if bookmark.private?
 				%> <span title="Private">🔒</span><%

@@ -61,6 +61,7 @@ gem 'with_advisory_lock', '~> 4.6.0'
 
 # Misc
 gem 'natural_sort', '~> 0.3.0'
+gem 'addressable', '~> 2.8.0'
 
 # Performance checking while developing
 gem 'bullet'

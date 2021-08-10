@@ -3,6 +3,8 @@
 # frozen_string_literal: true
 
 class Bookmark < ApplicationRecord
+  BLOCKED_SCHEMES = Set.new(["file", "javascript"]).freeze
+
   MAX_TAGS = Rails.configuration.x.maximum_tags
 
   has_and_belongs_to_many :tags, join_table: :bookmark_tags
@@ -16,7 +18,8 @@ class Bookmark < ApplicationRecord
   end
 
   validates :title, presence: true, length: { maximum: 255 }
-  validates :uri, presence: true, length: { maximum: 4096 }, format: { with: URI::regexp, allow_blank: true }, uniqueness: true
+  validates :uri, presence: true, length: { maximum: 4096 }, uniqueness: true
+  validate :validate_uri
   validate :validate_tags_string
 
   after_save :save_tags_string
@@ -31,6 +34,18 @@ class Bookmark < ApplicationRecord
   end
 
   private
+
+  def validate_uri
+    begin
+      if uri.present? && URI::regexp !~ uri
+        errors.add(:uri, "is invalid")
+      elsif BLOCKED_SCHEMES.include?(Addressable::URI.parse(uri).normalized_scheme)
+        errors.add(:uri, "scheme is not allowed")
+      end
+    rescue Addressable::URI::InvalidURIError => e
+      errors.add(:uri, "is invalid")
+    end
+  end
 
   def validate_tags_string
     return unless @new_tags
