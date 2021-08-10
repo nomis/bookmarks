@@ -5,9 +5,12 @@
 <% @list.bookmarks.each do |bookmark| %>
 	<li>
 		<%= link_to bookmark.title, bookmark.uri, class: "bookmark", referrerpolicy: "no-referrer" %><%
-			uri = URI.parse(bookmark.uri)
-			if uri.host
-				%> (<%= uri.host %>)<%
+			begin
+				uri = URI.parse(bookmark.uri)
+				if uri.host
+					%> (<%= uri.host %>)<%
+				end
+			rescue URI::InvalidURIError
 			end
 			if bookmark.private?
 				%> <span title="Private">🔒</span><%
