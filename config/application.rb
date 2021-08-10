@@ -40,6 +40,9 @@ module Bookmarks
     # Rails (6.1.1) does not set Vary: correctly, so Accept: must be ignored
     config.action_dispatch.ignore_accept_header = true
 
+    config.action_dispatch.cookies_same_site_protection = :strict
+
+    # Application config
     bm_def = YAML.load_file(Rails.root.join("config", "defaults", "bookmarks.yml"))
     cfg_file = Rails.root.join("config", "bookmarks.yml")
     cfg_file = Rails.root.join("config", "bookmarks.yml.sample") if !cfg_file.exist?
@@ -53,7 +56,5 @@ module Bookmarks
     Rails.application.default_url_options = config.x.base_url.to_hash.deep_symbolize_keys
     config.x.scm_revision = `git rev-parse HEAD`.strip
     config.x.scm_description = `git describe --dirty=+`.strip
-
-    config.action_dispatch.cookies_same_site_protection = :strict
   end
 end
