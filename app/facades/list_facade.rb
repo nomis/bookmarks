@@ -5,18 +5,16 @@
 include Pagy::Backend
 
 class ListFacade
-  attr_reader :pagination
-
   def initialize(params, bookmarks, tags, search_tags = Set.new)
     @params = params
     @tags = tags.with_count.order(:key)
-    # TODO: This shouldn't need to fetch the tags, because they have already been fetched above
-    @pagination, @bookmarks = pagy(bookmarks.order(created_at: :desc).order(:id).includes(:tags))
+    # TODO: This should join the tags table when querying bookmark_tags, but it doesn't ☹️
+    @bookmarks = bookmarks.order(created_at: :desc).order(:id).includes(:tags)
     @search_tags = search_tags
   end
 
   def bookmarks
-    @bookmark_facades ||= @bookmarks.map { |bookmark| BookmarkFacade.new(bookmark, @search_tags) }
+    @bookmark_facades ||= paginated_bookmarks.map { |bookmark| BookmarkFacade.new(bookmark, @search_tags) }
   end
 
   def tags
@@ -35,7 +33,15 @@ class ListFacade
     bookmarks.empty?
   end
 
+  def pagination
+    @pagination ||= Pagy.new(pagy_get_vars(@bookmarks, {}))
+  end
+
   private
 
   attr_reader :params
+
+  def paginated_bookmarks
+    pagy_get_items(@bookmarks, pagination)
+  end
 end
