@@ -42,6 +42,13 @@ module Bookmarks
 
     config.action_dispatch.cookies_same_site_protection = :strict
 
+    # Different databases have different types and expression syntax
+    require "active_record/database_configurations"
+    db_adapter = ActiveRecord::DatabaseConfigurations
+      .new(Rails.application.config.database_configuration)
+      .configs_for(env_name: Rails.env)[0].adapter
+    config.paths["db"] = "db/schema/#{db_adapter}"
+
     # Application config
     bm_def = YAML.load_file(Rails.root.join("config", "defaults", "bookmarks.yml"))
     cfg_file = Rails.root.join("config", "bookmarks.yml")
