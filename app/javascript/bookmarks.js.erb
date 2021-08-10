@@ -55,54 +55,58 @@ export function incrementalStop() {
 	console.log("Automatic page loading disabled");
 };
 
+function loadTitle(src, dst, msg, uri) {
+	if (src.dataset.loading) {
+		return;
+	}
+
+	dst.disabled = true;
+
+	src.dataset.loading = true;
+	src.dataset.lookup = "pending";
+	msg.innerText = "";
+
+	Rails.ajax({
+		url: "<%= Rails.application.routes.url_helpers.lookup_url_path(format: "json") %>",
+		type: "get",
+		data: "uri=" + encodeURIComponent(uri)
+			+ "&user_agent=" + encodeURIComponent(navigator.userAgent),
+		dataType: "json",
+		success: function(data) {
+			dst.disabled = false;
+
+			console.log(`Title for URL: ${data["title"]}`);
+
+			if (data["title"]) {
+				dst.value = data["title"];
+			}
+
+			delete src.dataset.loading;
+			src.dataset.lookup = "success";
+		},
+		error: function(data) {
+			dst.disabled = false;
+
+			if (data["error"]) {
+				data = data["error"];
+			}
+
+			console.log(`Failed to get title for URL: ${data}`);
+
+			msg.innerText = data;
+
+			delete src.dataset.loading;
+			src.dataset.lookup = "error";
+		}
+	})
+};
+
 function onPasteURI(src, dst, msg, event) {
 	var uri = event.clipboardData.getData("text");
 	if (uri.match(/https?:\/\//)) {
 		console.log(`HTTP URL pasted: ${uri}`);
 
-		if (src.dataset.loading) {
-			return;
-		}
-
-		dst.disabled = true;
-
-		src.dataset.loading = true;
-		src.dataset.lookup = "pending";
-		msg.innerText = "";
-
-		Rails.ajax({
-			url: "<%= Rails.application.routes.url_helpers.lookup_url_path(format: "json") %>",
-			type: "get",
-			data: "uri=" + encodeURIComponent(uri)
-				+ "&user_agent=" + encodeURIComponent(navigator.userAgent),
-			dataType: "json",
-			success: function(data) {
-				dst.disabled = false;
-
-				console.log(`Title for URL: ${data["title"]}`);
-
-				if (data["title"]) {
-					dst.value = data["title"];
-				}
-
-				delete src.dataset.loading;
-				src.dataset.lookup = "success";
-			},
-			error: function(data) {
-				dst.disabled = false;
-
-				if (data["error"]) {
-					data = data["error"];
-				}
-
-				console.log(`Failed to get title for URL: ${data}`);
-
-				msg.innerText = data;
-
-				delete src.dataset.loading;
-				src.dataset.lookup = "error";
-			}
-		})
+		loadTitle(src, dst, msg, uri);
 	}
 };
 
@@ -114,11 +118,22 @@ function onInputURI(src, msg, event) {
 	}
 };
 
-export function setupPasteURI(src, dst, msg) {
+function onRefreshURI(src, dst, msg, event) {
+	var uri = src.value;
+	if (uri.match(/https?:\/\//)) {
+		console.log(`Refreshing title for: ${uri}`);
+
+		loadTitle(src, dst, msg, uri);
+	}
+};
+
+export function setupPasteURI(src, dst, msg, refresh) {
 	src = document.getElementById(src);
 	dst = document.getElementById(dst);
 	msg = document.getElementById(msg);
+	refresh = document.getElementById(refresh);
 	src.addEventListener("paste", onPasteURI.bind(null, src, dst, msg));
 	src.addEventListener("input", onInputURI.bind(null, src, msg));
-	console.log("Automatic HTTP URL paste handling enabled");
+	refresh.addEventListener("click", onRefreshURI.bind(null, src, dst, msg));
+	console.log("Automatic HTTP URL title handling enabled");
 };
