@@ -33,7 +33,7 @@ class User < ApplicationRecord
     if session_token.nil?
       invalidate_all_sessions!
     end
-    session_token
+    "#{super}#{session_token}"
   end
 
   def invalidate_all_sessions!
