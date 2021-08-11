@@ -40,8 +40,10 @@
 	<p class="actions">
 		<%= form.submit %>
 		<input id="bookmark_title_refresh" type="button" value="Refresh Title">
+		<span id="bookmark_open"></span>
 	</p>
 <% end %>
 <script type="text/javascript">
 Bookmarks.setupPasteURI("bookmark_uri", "bookmark_title", "bookmark_uri_error", "bookmark_title_refresh");
+Bookmarks.setupOpenURI("bookmark_open", "bookmark_uri");
 </script>

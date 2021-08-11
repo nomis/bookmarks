@@ -127,6 +127,12 @@ function onRefreshURI(src, dst, msg, event) {
 	}
 };
 
+function onOpenURI(dst, event) {
+	var uri = dst.value;
+	console.log(`Opening: ${uri}`);
+	window.open(uri);
+};
+
 export function setupPasteURI(src, dst, msg, refresh) {
 	src = document.getElementById(src);
 	dst = document.getElementById(dst);
@@ -136,4 +142,15 @@ export function setupPasteURI(src, dst, msg, refresh) {
 	src.addEventListener("input", onInputURI.bind(null, src, msg));
 	refresh.addEventListener("click", onRefreshURI.bind(null, src, dst, msg));
 	console.log("Automatic HTTP URL title handling enabled");
+};
+
+export function setupOpenURI(src, dst) {
+	src = document.getElementById(src);
+	dst = document.getElementById(dst);
+	var input = document.createElement("input");
+	input.type = "button";
+	input.value = "Open URI";
+	src.appendChild(input);
+	input.addEventListener("click", onOpenURI.bind(null, dst));
+	console.log("Open URI button added");
 };
