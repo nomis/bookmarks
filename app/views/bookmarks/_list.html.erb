@@ -20,7 +20,7 @@
 </ul>
 </nav>
 <% if @list.tags.present? %>
-<h2>Tags</h2>
+<h2>Tags <span class="count">(<%= @list.tags.size %>)</span></h2>
 <ul class="main tags">
 	<% @list.tags.each do |t| %>
 		<%= tag.li(class: t.search_match? ? "matching" : nil) do
@@ -36,7 +36,7 @@
 </header>
 <main id="main">
 <% if @list.bookmarks.present? %>
-<h2>Bookmarks</h2>
+<h2>Bookmarks <span class="count">(<%= @list.bookmarks_count %>)</span></h2>
 <ol id="bookmarks" class="bookmarks" start="<%= @list.pagination.offset + 1 %>">
 	<%= render partial: "list_bookmarks" %>
 </ol>

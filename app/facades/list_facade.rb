@@ -17,6 +17,10 @@ class ListFacade
     @bookmark_facades ||= paginated_bookmarks.map { |bookmark| BookmarkFacade.new(bookmark, @search_tags) }
   end
 
+  def bookmarks_count
+    unpaginated_bookmarks.count
+  end
+
   def tags
     @tag_facades ||= @tags.map { |tag| TagFacade.new(tag, @search_tags) }
   end
@@ -42,7 +46,11 @@ class ListFacade
 
   attr_reader :params
 
+  def unpaginated_bookmarks
+    @bookmarks
+  end
+
   def paginated_bookmarks
-    pagy_get_items(@bookmarks, pagination)
+    pagy_get_items(unpaginated_bookmarks, pagination)
   end
 end
