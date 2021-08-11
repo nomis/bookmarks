@@ -65,14 +65,17 @@ ul.item.menu
 		padding-left: 0
 
 
-@mixin tags($tagfg, $tagbg, $tagfg_active, $weight)
+@mixin tags($tagfg, $tagbg, $tagfg_active, $weight, $offset: true)
 	$tagbg_active: $tagbg
 	$border: 1pt
 	$outline: 2pt
 	$padding: 2pt
 	$clearance: $border + max($padding, $outline)
 
-	margin: 0 0 (-($clearance)) 0
+	@if $offset
+		margin: 0 0 (-($clearance)) 0
+	@else
+		margin: 0
 	padding: 0
 
 	li
@@ -135,7 +138,10 @@ ul.main.tags
 ul.item.tags
 	@include tags(#999, #fff, #c00, normal)
 
-ul.main.tags a:hover span.name, ul.item.tags a:hover
+ul.show.tags
+	@include tags(#f63, #fff, #c00, bold, false)
+
+ul.main.tags a:hover span.name, ul.item.tags a:hover, ul.show.tags a:hover
 	text-decoration-line: underline
 
 ol.bookmarks
