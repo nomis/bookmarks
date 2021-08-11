@@ -65,11 +65,6 @@ module Bookmarks
       "Expires" => 1.day.from_now.httpdate,
     }
 
-    # Apply Cache-Control only to content that doesn't change
-    config.middleware.insert_before(ActionDispatch::Static,
-      CacheStaticContent, %r{^/(assets|packs[^/]*/js)/},
-      "maxage=#{10.years.to_i}, public, immutable")
-
     # Different databases have different types and expression syntax
     require "active_record/database_configurations"
     db_adapter = ActiveRecord::DatabaseConfigurations
@@ -97,5 +92,15 @@ module Bookmarks
     Rails.application.default_url_options = config.x.base_url.to_hash.deep_symbolize_keys
     config.x.scm_revision = `git rev-parse HEAD`.strip
     config.x.scm_description = `git describe --dirty=+`.strip
+
+    # After environment configuration
+    config.before_initialize do
+      if config.public_file_server.enabled
+        # Apply Cache-Control only to content that doesn't change
+        config.middleware.insert_before(ActionDispatch::Static,
+          CacheStaticContent, %r{^/(assets|packs[^/]*/js)/},
+          "maxage=#{10.years.to_i}, public, immutable")
+      end
+    end
   end
 end
