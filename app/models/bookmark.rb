@@ -25,6 +25,27 @@ class Bookmark < ApplicationRecord
   after_save :save_tags_string
   before_destroy :remove_all_tags
 
+  def uri=(uri)
+    self[:uri] = uri
+    return if uri.blank?
+
+    begin
+      uri = Addressable::URI.parse(uri)
+
+      uri = Addressable::URI.new(
+        :scheme     => uri.normalized_scheme,
+        :authority  => uri.normalized_authority,
+        :path       => uri.path,
+        :query      => uri.query,
+        :fragment   => uri.fragment,
+      )
+
+      self[:uri] = uri.to_s
+    rescue Addressable::URI::InvalidURIError
+      # Handled by validate_uri
+    end
+  end
+
   def tags_string
     (@new_tags ? @new_tags.values : tags).pluck(:name).sort_by(&:downcase).join(" ")
   end
