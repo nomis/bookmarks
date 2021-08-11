@@ -35,8 +35,8 @@
 			<dt class="no_css">Actions:</dt>
 			<dd class="item menu">
 				<ul class="item menu">
-					<li><%= link_to edit_bookmark_path(bookmark), rel: "nofollow", title: "Edit", class: "icon edit" do %><span>Edit</span><% end %></li>
-					<li><%= link_to delete_bookmark_path(bookmark, request_forgery_protection_token => form_authenticity_token), rel: "nofollow", title: "Delete", class: "icon delete", data: { confirm: "Are you sure?" } do %><span>Delete</span><% end %></li>
+					<li><%= link_to edit_bookmark_path(bookmark, auto_list_context), rel: "nofollow", title: "Edit", class: "icon edit" do %><span>Edit</span><% end %></li>
+					<li><%= link_to delete_bookmark_path(bookmark, auto_list_context(request_forgery_protection_token => form_authenticity_token)), rel: "nofollow", title: "Delete", class: "icon delete", data: { confirm: "Are you sure?" } do %><span>Delete</span><% end %></li>
 				</ul>
 			</dd>
 			<% end %>

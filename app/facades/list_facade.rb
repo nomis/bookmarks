@@ -26,6 +26,7 @@ class ListFacade
   end
 
   def search_param
+    return nil if @search_tags.empty?
     @search_param ||= @search_tags.sort(&NaturalSort).join(",")
   end
 

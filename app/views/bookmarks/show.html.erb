@@ -29,8 +29,8 @@ content_for :robots, "noindex"
 
 <ul class="menu">
 <% if user_signed_in? %>
-	<li><%= link_to "Edit", edit_bookmark_path(@bookmark), rel: "nofollow", class: "edit" %></li>
+	<li><%= link_to "Edit", edit_bookmark_path(@bookmark, auto_params_context), rel: "nofollow", class: "edit" %></li>
 <% end %>
-	<li><%= link_to "Back", root_path, class: "back" %></li>
-	<li><%= link_to "Delete", delete_bookmark_path(@bookmark, request_forgery_protection_token => form_authenticity_token), rel: "nofollow", class: "delete", data: { confirm: "Are you sure?" } %></li>
+	<li><%= link_to "Back", auto_root_path, class: "back" %></li>
+	<li><%= link_to "Delete", delete_bookmark_path(@bookmark, auto_params_context(request_forgery_protection_token => form_authenticity_token)), rel: "nofollow", class: "delete", data: { confirm: "Are you sure?" } %></li>
 </ul>

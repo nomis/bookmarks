@@ -13,6 +13,23 @@ module BookmarksHelper
     end
   end
 
+  def auto_list_context(others = {})
+    { search_tags: @list.search_param }.merge(others)
+  end
+
+  def auto_params_context(others = {})
+    { search_tags: params[:search_tags] }.merge(others)
+  end
+
+  def auto_root_path
+    context = auto_params_context
+    if context[:search_tags].present?
+      search_by_tags_path(tags: context[:search_tags])
+    else
+      root_path
+    end
+  end
+
   private
 
   def tag_search_href(tag)

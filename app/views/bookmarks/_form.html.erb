@@ -37,6 +37,12 @@
 		<%= form.check_box :private, autocomplete: "off" %>
 	</p>
 
+	<% auto_params_context.each do |key, value| %>
+		<% if value.present? %>
+			<input type="hidden" name="<%= key %>" value="<%= value %>">
+		<% end %>
+	<% end %>
+
 	<p class="actions">
 		<%= form.submit %>
 		<input id="bookmark_title_refresh" type="button" value="Refresh Title">

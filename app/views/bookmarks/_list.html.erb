@@ -6,7 +6,7 @@
 <nav>
 <ul class="main menu">
 <% if user_signed_in? %>
-	<li><%= link_to "New", new_bookmark_path, rel: "nofollow", class: "new" %></li>
+	<li><%= link_to "New", new_bookmark_path(auto_list_context), rel: "nofollow", class: "new" %></li>
 	<li><%= link_to "🔖", bookmarklet_uri, title: "Bookmarklet to create a new bookmark", rel: "nofollow", class: "bookmarklet" %></li>
 <% end %>
 	<li><%= link_to "Skip to content", "#main", class: "skip" %></li>

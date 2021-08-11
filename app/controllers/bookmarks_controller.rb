@@ -54,7 +54,7 @@ class BookmarksController < ApplicationController
     respond_to do |format|
       # Tag manipulation cannot not be done concurrently in a safe way
       if @bookmark.with_advisory_lock("bookmark") { @bookmark.save }
-        format.html { redirect_to @bookmark, notice: "Bookmark was successfully created." }
+        format.html { redirect_to bookmark_path(@bookmark, helpers.auto_params_context), notice: "Bookmark was successfully created." }
         format.json { render :show, status: :created, location: @bookmark }
       else
         format.html { render :new }
@@ -69,7 +69,7 @@ class BookmarksController < ApplicationController
     respond_to do |format|
       # Tag manipulation cannot not be done concurrently in a safe way
       if @bookmark.with_advisory_lock("bookmark") { @bookmark.update(bookmark_params) }
-        format.html { redirect_to @bookmark, notice: "Bookmark was successfully updated." }
+        format.html { redirect_to bookmark_path(@bookmark, helpers.auto_params_context), notice: "Bookmark was successfully updated." }
         format.json { render :show, status: :ok, location: @bookmark }
       else
         format.html { render :edit }
@@ -86,7 +86,7 @@ class BookmarksController < ApplicationController
     # Tag manipulation cannot not be done concurrently in a safe way
     @bookmark.with_advisory_lock("bookmark") { @bookmark.destroy }
 
-    redirect_to root_path, notice: "Bookmark was successfully deleted."
+    redirect_to helpers.auto_root_path, notice: "Bookmark was successfully deleted."
   end
 
   # DELETE /bookmarks/1
@@ -96,7 +96,7 @@ class BookmarksController < ApplicationController
     @bookmark.with_advisory_lock("bookmark") { @bookmark.destroy }
 
     respond_to do |format|
-      format.html { redirect_to root_path, notice: "Bookmark was successfully deleted." }
+      format.html { redirect_to helpers.auto_root_path, notice: "Bookmark was successfully deleted." }
       format.json { head :no_content }
     end
   end
