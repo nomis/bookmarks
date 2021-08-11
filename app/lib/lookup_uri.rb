@@ -42,7 +42,7 @@ class LookupURI
 
     @uri = uri
     @client = HTTP
-      .timeout(connect: 4, read: 4)
+      .timeout(connect: 4.seconds, read: 4.seconds)
       .nodelay
       .follow(max_hops: 3)
       .use({
@@ -54,19 +54,15 @@ class LookupURI
       .headers("Accept-Encoding" => "gzip")
     @client = @client.headers("User-Agent" => user_agent) if user_agent.present?
 
-    Timeout::timeout(5) do
-      content = read
+    content, page = parse(5.seconds)
+    titles = page.css("title")
 
-      page = Nokogiri::HTML(content)
-      titles = page.css("title")
-
-      if titles.length > 0
-        self.title = titles[0].text
-      elsif complete
-        self.error = "Page has no title"
-      else
-        self.error = "Page has no title in the first #{content.length} #{"byte".pluralize(content.length)}"
-      end
+    if titles.length > 0
+      self.title = titles[0].text
+    elsif complete
+      self.error = "Page has no title"
+    else
+      self.error = "Page has no title in the first #{content.length} #{"byte".pluralize(content.length)}"
     end
   end
 
@@ -99,5 +95,20 @@ class LookupURI
     data
   ensure
     @client.close
+  end
+
+  def parse(timeout)
+    future = Concurrent::Future.execute do
+      content = read
+      page = Nokogiri::HTML(content)
+      [content, page]
+    end
+
+    future.wait(timeout)
+    if future.complete?
+      content, page = future.value!
+    else
+      raise Concurrent::TimeoutError
+    end
   end
 end

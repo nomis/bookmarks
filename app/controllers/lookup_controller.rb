@@ -15,7 +15,7 @@ class LookupController < ApplicationController
     respond_to do |format|
       format.json { render json: lookup.data }
     end
-  rescue Timeout::Error, HTTP::TimeoutError => e
+  rescue Concurrent::TimeoutError, HTTP::TimeoutError => e
     error(:gateway_timeout, format_message(e))
   rescue HTTP::Error, OpenSSL::SSL::SSLError, Zlib::Error => e
     error(:service_unavailable, format_message(e))

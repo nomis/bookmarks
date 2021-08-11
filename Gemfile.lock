@@ -248,6 +248,7 @@ DEPENDENCIES
   bullet
   byebug
   capybara (>= 3.26)
+  concurrent-ruby (~> 1.1.9)
   devise (~> 4.8.0)
   fast_xs (~> 0.8.0)
   http (~> 4.4.1)
