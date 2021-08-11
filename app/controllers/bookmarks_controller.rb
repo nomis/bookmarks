@@ -26,7 +26,17 @@ class BookmarksController < ApplicationController
   # GET /bookmarks/1
   # GET /bookmarks/1.json
   # GET /bookmarks/1.xml
-  def show; end
+  def show
+    respond_to do |format|
+      format.html do
+        @bookmark = BookmarkFacade.new(@bookmark, Set.new) do |tags|
+          tags.for_user(user_signed_in?).with_count.order(:key)
+        end
+      end
+      format.json
+      format.xml
+    end
+  end
 
   # GET /bookmarks/new
   def new

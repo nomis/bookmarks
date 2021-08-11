@@ -22,11 +22,11 @@ class ListFacade
   end
 
   def tags
-    @tag_facades ||= @tags.map { |tag| TagFacade.new(tag, @search_tags) }
+    @tag_facades ||= @tags.sort_by(&:key).map { |tag| TagFacade.new(tag, @search_tags) }
   end
 
   def search_tags
-    @search_tags_names ||= tags.select(&:search_match?).map(&:name).sort(&NaturalSort)
+    @search_tags_names ||= tags.select(&:search_match?).map(&:name)
   end
 
   def search_param

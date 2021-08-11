@@ -5,11 +5,18 @@
 class BookmarkFacade
   def initialize(bookmark, search_tags = Set.new)
     @bookmark = bookmark
+    @tags = bookmark.tags
     @search_tags = search_tags
+
+    @tags = yield @tags if block_given?
   end
 
   def to_param
     @bookmark.to_param
+  end
+
+  def id
+    @bookmark.id
   end
 
   def title
@@ -21,7 +28,7 @@ class BookmarkFacade
   end
 
   def tags
-    @tag_facades ||= @bookmark.tags.sort_by(&:name).map { |tag| TagFacade.new(tag, @search_tags) }
+    @tag_facades ||= @tags.sort_by(&:key).map { |tag| TagFacade.new(tag, @search_tags) }
   end
 
   def private?
