@@ -3,7 +3,7 @@
 
 user = user_signed_in?
 
-xml.instruct!
+xml.instruct!("xml".freeze, version: "1.0".freeze, encoding: "UTF-8".freeze)
 xml.declare!(:DOCTYPE, :xbel, :PUBLIC,
 	"+//IDN python.org//DTD XML Bookmark Exchange Language 1.0//EN//XML".freeze,
 	"http://www.python.org/topics/xml/dtds/xbel-1.0.dtd".freeze)
