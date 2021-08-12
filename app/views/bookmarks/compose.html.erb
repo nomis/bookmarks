@@ -1,0 +1,11 @@
+<%
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+content_for :title, "Compose"
+content_for :robots, "noindex"
+
+href = compose_bookmark_with_session_url(title: params[:title], uri: params[:uri])
+content_for :redirect, href
+%>
+<p>Session cookies are required to <%= link_to "continue", href %>.</p>

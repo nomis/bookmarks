@@ -6,7 +6,7 @@ class BookmarksController < ApplicationController
   MAX_TAGS = Rails.configuration.x.maximum_tags
 
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
-  before_action :authenticate_user!, except: [:index, :show, :search, :incremental]
+  before_action :authenticate_user!, except: [:index, :show, :search, :incremental, :compose]
   before_action :check_access, only: [:show]
   before_action :delete_cookies
 
@@ -45,6 +45,12 @@ class BookmarksController < ApplicationController
 
   # GET /bookmarks/compose
   def compose
+    # Initiate client redirect to obtain SameSite=Strict cookies
+    helpers.no_session!
+  end
+
+  # GET /bookmarks/compose_with_session
+  def compose_with_session
     bookmark = Bookmark.find_by(uri: params["uri"])
     if bookmark
       redirect_to edit_bookmark_path(bookmark), notice: "Bookmark for \"#{params["title"]}\" already exists."

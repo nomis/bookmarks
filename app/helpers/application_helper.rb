@@ -72,9 +72,13 @@ module ApplicationHelper
     !request.session_options[:drop]
   end
 
-  def delete_cookies!
+  def no_session!
     # Mark the session to be dropped
     request.session_options[:drop] = true
+  end
+
+  def delete_cookies!
+    no_session!
 
     # Mark all cookies to be deleted
     cookies.clear
