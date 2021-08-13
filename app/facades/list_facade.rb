@@ -5,6 +5,8 @@
 include Pagy::Backend
 
 class ListFacade
+  include Rails.application.routes.url_helpers
+
   def initialize(params, bookmarks, tags, search_tags = Set.new)
     @params = params
     @tags = tags.with_count.order(:key)
@@ -39,12 +41,20 @@ class ListFacade
   end
 
   def pagination
-    @pagination ||= Pagy.new(pagy_get_vars(@bookmarks, {}))
+    @pagination ||= Pagy.new(pagy_get_vars(@bookmarks, url: self_path))
   end
 
   private
 
   attr_reader :params
+
+  def self_path
+    if search_param
+      search_by_tags_path(tags: search_param)
+    else
+      root_path
+    end
+  end
 
   def unpaginated_bookmarks
     @bookmarks

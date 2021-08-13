@@ -140,6 +140,8 @@ require 'pagy/extras/trim'
 # set to false if you want to make :enable_trim_extra an opt-in variable
 # Pagy::VARS[:enable_trim_extra] = false # default true
 
+# Standalone extra: Allows url to be overridden
+require 'pagy/extras/standalone'
 
 # Rails
 
