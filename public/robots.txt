@@ -1,5 +1,7 @@
 User-agent: *
-Disallow: /bookmarks/
-Disallow: /rails/
-Disallow: /users/
-Disallow: /tags/
+Disallow: /bookmarks
+Disallow: /lookup
+Disallow: /rails
+Disallow: /tags
+Disallow: /untagged
+Disallow: /users

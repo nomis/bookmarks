@@ -17,6 +17,8 @@ class Bookmark < ApplicationRecord
     end
   end
 
+  scope :without_tags, -> { where.not(id: BookmarkTag.select(:bookmark_id)) }
+
   validates :title, presence: true, length: { maximum: 255 }
   validates :uri, presence: true, length: { maximum: 4096 }, uniqueness: true
   validate :validate_uri

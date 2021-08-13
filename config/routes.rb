@@ -16,8 +16,11 @@ Rails.application.routes.draw do
   resources :bookmarks, constraints: { format: ["html", "json", "xml"] }
   get "/bookmarks/:id/delete", to: "bookmarks#delete",
     as: :delete_bookmark, constraints: { format: ["html"] }
-  get "/tags/:tags", to: "bookmarks#search",
+
+  get "/tags/:tags", to: "bookmarks#search_tagged",
     as: :search_by_tags, constraints: { format: ["html", "json", "xml"] }
+  get "/untagged", to: "bookmarks#search_untagged",
+    as: :search_untagged, constraints: { format: ["html", "json", "xml"] }
 
   get "/lookup/url", to: "lookup#url",
     as: :lookup_url, constraints: { format: ["json"] }

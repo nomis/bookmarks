@@ -14,17 +14,25 @@ module BookmarksHelper
   end
 
   def auto_list_context(others = {})
-    { search_tags: @list.search_param }.merge(others)
+    {
+      search_tags: @list.search_param,
+      search_untagged: @list.search_untagged? ? 1 : nil,
+    }.merge(others)
   end
 
   def auto_params_context(others = {})
-    { search_tags: params[:search_tags] }.merge(others)
+    {
+      search_tags: params[:search_tags],
+      search_untagged: params[:search_untagged].to_i == 1 ? 1 : nil,
+    }.merge(others)
   end
 
   def auto_root_path
     context = auto_params_context
     if context[:search_tags].present?
       search_by_tags_path(tags: context[:search_tags])
+    elsif context[:search_untagged]
+      search_untagged_path
     else
       root_path
     end
@@ -35,6 +43,8 @@ module BookmarksHelper
   def tag_search_href(tag)
     if tag.search_toggle_type == :all
       root_path
+    elsif tag.search_toggle_type == :untagged
+      search_untagged_path
     else
       search_by_tags_path(tags: tag.search_toggle_tags.sort(&NaturalSort).join(","))
     end
@@ -50,6 +60,8 @@ module BookmarksHelper
       "Remove tag \"#{tag.name}\" from search"
     when :all
       "All bookmarks"
+    when :untagged
+      "Untagged bookmarks"
     end
   end
 

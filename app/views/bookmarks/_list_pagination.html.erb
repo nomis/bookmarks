@@ -4,5 +4,5 @@
 %>
 <%== pagination_nav(@list.pagination) if @list.pagination.pages > 1 %>
 <% if @list.pagination.page.to_i < @list.pagination.pages %>
-<span id="more_link" class="no_css" data-href="<%= incremental_bookmark_path(format: "json", page: @list.pagination.next, tags: @list.search_param) %>"></span>
+<span id="more_link" class="no_css" data-href="<%= incremental_bookmark_path(auto_list_context(format: "json", page: @list.pagination.next)) %>"></span>
 <% end %>

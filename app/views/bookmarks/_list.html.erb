@@ -20,7 +20,7 @@
 </ul>
 </nav>
 <% if @list.tags.present? %>
-<h2>Tags <span class="count">(<%= @list.tags.size %>)</span></h2>
+<h2>Tags <span class="count">(<%= @list.tags_count %>)</span></h2>
 <ul class="main tags">
 	<% @list.tags.each do |t| %>
 		<%= tag.li(class: t.search_match? ? "matching" : nil) do

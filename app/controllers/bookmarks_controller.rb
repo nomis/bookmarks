@@ -6,7 +6,7 @@ class BookmarksController < ApplicationController
   MAX_TAGS = Rails.configuration.x.maximum_tags
 
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
-  before_action :authenticate_user!, except: [:index, :show, :search, :incremental, :compose]
+  before_action :authenticate_user!, except: [:index, :show, :search_tagged, :search_untagged, :incremental, :compose]
   before_action :check_access, only: [:show]
   before_action :delete_cookies
 
@@ -120,12 +120,13 @@ class BookmarksController < ApplicationController
   # GET /tags/1,2,3
   # GET /tags/1,2,3.json
   # GET /tags/1,2,3.xml
-  def search
+  def search_tagged
     return unless load_bookmarks(params[:tags])
 
     respond_to do |format|
       format.html do
         return unless canonical_pagination(@list.pagination, tags: params[:tags])
+        return unless canonical_search(params[:tags])
         redirect_to root_path if @list.empty?
       end
       format.json { @bookmarks = @bookmarks.includes(:tags) }
@@ -133,9 +134,24 @@ class BookmarksController < ApplicationController
     end
   end
 
-  # GET /incremental.json?page=...[&tags=...]
+  # GET /untagged
+  # GET /untagged.json
+  # GET /untagged.xml
+  def search_untagged
+    return unless load_bookmarks(nil, true)
+
+    respond_to do |format|
+      format.html do
+        redirect_to root_path if @list.empty?
+      end
+      format.json { @bookmarks = @bookmarks.includes(:tags) }
+      format.xml { @bookmarks = @bookmarks.includes(:tags) }
+    end
+  end
+
+  # GET /incremental.json?page=...[&search_tags=...][&search_untagged=1]
   def incremental
-    return unless load_bookmarks(params[:tags])
+    return unless load_bookmarks(params[:search_tags], params[:search_untagged].to_i == 1)
 
     respond_to do |format|
       format.json
@@ -159,7 +175,12 @@ class BookmarksController < ApplicationController
   end
 
   # Load bookmarks for index, search or incremental output
-  def load_bookmarks(tags_param = nil)
+  def load_bookmarks(tags_param = nil, untagged_only = false)
+    if tags_param.present? && untagged_only
+      render(status: :bad_request)
+      return false
+    end
+
     filter_tags = tags_param ? Set.new(tags_param.split(",").map(&:to_i)) : Set.new()
 
     @bookmarks = Bookmark.for_user(user_signed_in?)
@@ -167,13 +188,17 @@ class BookmarksController < ApplicationController
 
     if !filter_tags.empty?
       validate_search(filter_tags)
-      return false unless canonical_search(filter_tags)
 
       @bookmarks = @bookmarks.with_tags(filter_tags)
       tags = tags.common_tags(filter_tags)
     end
 
-    @list = ListFacade.new(params, @bookmarks, tags, filter_tags)
+    if untagged_only
+      @bookmarks = @bookmarks.without_tags
+      tags = tags.none
+    end
+
+    @list = ListFacade.new(params, @bookmarks, tags, filter_tags, untagged_only)
     true
   end
 
@@ -186,9 +211,9 @@ class BookmarksController < ApplicationController
   end
 
   # Canonicalise search URL
-  def canonical_search(filter_tags)
-    canonical_filter_tags = filter_tags.sort(&NaturalSort).join(",")
-    if params[:tags] == canonical_filter_tags
+  def canonical_search(tags_param)
+    canonical_filter_tags = tags_param.split(",").map(&:to_i).sort(&NaturalSort).join(",")
+    if tags_param == canonical_filter_tags
       true
     else
       respond_to do |format|
