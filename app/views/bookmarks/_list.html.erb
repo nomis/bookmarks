@@ -19,7 +19,7 @@
 	<li><%= link_to "About", about_source_path, class: "source" %></li>
 </ul>
 </nav>
-<% if @list.tags.present? %>
+<% if @list.tags_count > 0 %>
 <h2>Tags <span class="count">(<%= @list.tags_count %>)</span></h2>
 <ul class="main tags">
 	<% @list.tags.each do |t| %>
