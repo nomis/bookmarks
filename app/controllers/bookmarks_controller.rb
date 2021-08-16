@@ -8,16 +8,41 @@ class BookmarksController < ApplicationController
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
   before_action :authenticate_user!, except: [:index, :show, :search_tagged, :search_untagged, :incremental, :compose]
   before_action :check_access, only: [:show]
-  before_action :delete_cookies
 
+  # Not called if authenticate_user! is used
+  after_action :delete_cookies
+
+  # GET /
   # GET /bookmarks
   # GET /bookmarks.json
   # GET /bookmarks.xml
+  # GET /tags/1,2,3
+  # GET /tags/1,2,3.json
+  # GET /tags/1,2,3.xml
+  # GET /public/tags/1,2,3
+  # GET /public/tags/1,2,3.json
+  # GET /public/tags/1,2,3.xml
+  # GET /private/tags/1,2,3
+  # GET /private/tags/1,2,3.json
+  # GET /private/tags/1,2,3.xml
+  # GET /untagged
+  # GET /untagged.json
+  # GET /untagged.xml
+  # GET /public/untagged
+  # GET /public/untagged.json
+  # GET /public/untagged.xml
+  # GET /private/untagged
+  # GET /private/untagged.json
+  # GET /private/untagged.xml
   def index
-    return unless load_bookmarks
+    return unless load_bookmarks(params[:tags], params[:untagged] == true, params[:visibility])
 
     respond_to do |format|
-      format.html { canonical_pagination(@list.pagination) }
+      format.html do
+        return unless canonical_pagination(@list.pagination, tags: params[:tags])
+        return unless canonical_search(params[:tags])
+        redirect_to root_path if @list.empty?
+      end
       format.json { @bookmarks = @bookmarks.includes(:tags) }
       format.xml { @bookmarks = @bookmarks.includes(:tags) }
     end
@@ -117,42 +142,12 @@ class BookmarksController < ApplicationController
     end
   end
 
-  # GET /tags/1,2,3
-  # GET /tags/1,2,3.json
-  # GET /tags/1,2,3.xml
-  def search_tagged
-    return unless load_bookmarks(params[:tags])
-
-    respond_to do |format|
-      format.html do
-        return unless canonical_pagination(@list.pagination, tags: params[:tags])
-        return unless canonical_search(params[:tags])
-        redirect_to root_path if @list.empty?
-      end
-      format.json { @bookmarks = @bookmarks.includes(:tags) }
-      format.xml { @bookmarks = @bookmarks.includes(:tags) }
-    end
-  end
-
-  # GET /untagged
-  # GET /untagged.json
-  # GET /untagged.xml
-  def search_untagged
-    return unless load_bookmarks(nil, true)
-
-    respond_to do |format|
-      format.html do
-        return unless canonical_pagination(@list.pagination, tags: params[:tags])
-        redirect_to root_path if @list.empty?
-      end
-      format.json { @bookmarks = @bookmarks.includes(:tags) }
-      format.xml { @bookmarks = @bookmarks.includes(:tags) }
-    end
-  end
-
-  # GET /incremental.json?page=...[&search_tags=...][&search_untagged=1]
+  # GET /incremental.json?page=...[&search_tags=...][&search_untagged=1][&search_visibility=...]
   def incremental
-    return unless load_bookmarks(params[:search_tags], params[:search_untagged].to_i == 1)
+    checked_params = helpers.auto_params_context
+    return unless load_bookmarks(checked_params[:search_tags],
+      checked_params[:search_untagged],
+      checked_params[:search_visibility])
 
     respond_to do |format|
       format.json
@@ -176,16 +171,29 @@ class BookmarksController < ApplicationController
   end
 
   # Load bookmarks for index, search or incremental output
-  def load_bookmarks(tags_param = nil, untagged_only = false)
+  def load_bookmarks(tags_param, untagged_only, visibility)
     if tags_param.present? && untagged_only
       render(status: :bad_request)
       return false
+    elsif !visibility.nil?
+      if !["public", "private"].include?(visibility)
+        render(status: :bad_request)
+        return false
+      else
+        # Only users are allowed to search by visibility
+        authenticate_user!
+      end
     end
 
     filter_tags = tags_param ? Set.new(tags_param.split(",").map(&:to_i)) : Set.new()
 
     @bookmarks = Bookmark.for_user(user_signed_in?)
     tags = Tag.for_user(user_signed_in?)
+
+    if visibility.present?
+      @bookmarks = @bookmarks.where(private: visibility == "private")
+      tags = tags.joins(:bookmarks).merge(Bookmark.where(private: visibility == "private"))
+    end
 
     if !filter_tags.empty?
       validate_search(filter_tags)
@@ -199,7 +207,7 @@ class BookmarksController < ApplicationController
       tags = tags.none
     end
 
-    @list = ListFacade.new(params, @bookmarks, tags, filter_tags, untagged_only)
+    @list = ListFacade.new(params, @bookmarks, tags, filter_tags, untagged_only, visibility&.to_sym)
     true
   end
 
@@ -213,6 +221,8 @@ class BookmarksController < ApplicationController
 
   # Canonicalise search URL
   def canonical_search(tags_param)
+    return true if tags_param.nil?
+
     canonical_filter_tags = tags_param.split(",").map(&:to_i).sort(&NaturalSort).join(",")
     if tags_param == canonical_filter_tags
       true

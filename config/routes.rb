@@ -17,10 +17,25 @@ Rails.application.routes.draw do
   get "/bookmarks/:id/delete", to: "bookmarks#delete",
     as: :delete_bookmark, constraints: { format: ["html"] }
 
-  get "/tags/:tags", to: "bookmarks#search_tagged",
-    as: :search_by_tags, constraints: { format: ["html", "json", "xml"] }
-  get "/untagged", to: "bookmarks#search_untagged",
-    as: :search_untagged, constraints: { format: ["html", "json", "xml"] }
+  get "/public", to: "bookmarks#index",
+    as: :search_public, constraints: {
+      format: ["html", "json", "xml"],
+    }, defaults: { visibility: "public" }
+  get "/private", to: "bookmarks#index",
+    as: :search_private, constraints: {
+      format: ["html", "json", "xml"],
+    }, defaults: { visibility: "private" }
+
+  get "(/:visibility)/tags/:tags", to: "bookmarks#index",
+    as: :search_by_tags, constraints: {
+      format: ["html", "json", "xml"],
+      visibility: ["public", "private"]
+    }
+  get "(/:visibility)/untagged", to: "bookmarks#index",
+    as: :search_untagged, constraints: {
+      format: ["html", "json", "xml"],
+      visibility: ["public", "private"]
+    }, defaults: { untagged: true }
 
   get "/lookup/url", to: "lookup#url",
     as: :lookup_url, constraints: { format: ["json"] }

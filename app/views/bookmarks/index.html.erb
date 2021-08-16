@@ -1,6 +1,9 @@
 <%
 # SPDX-FileCopyrightText: 2021 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
+
+content_for :robots, "noindex" unless @list.allow_robots?
+content_for :title, @list.description
 %>
-<h1>All bookmarks</h1>
+<h1><%= @list.name %></h1>
 <%= render partial: "list" %>

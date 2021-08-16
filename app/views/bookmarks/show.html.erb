@@ -18,7 +18,7 @@ content_for :robots, "noindex"
 			<ul class="single tags">
 				<% @bookmark.tags.each do |t| %>
 					<%= tag.li do
-						%><%= link_to_search_by_tags(t) do
+						%><%= link_to_search_by_tags(nil, t) do
 							%><span class="name"><%= t.name %></span>&nbsp;<span class="count"><span class="no_css">(</span><%= t.count %><span class="no_css">)</span></span><%
 						end %><%
 					end %>

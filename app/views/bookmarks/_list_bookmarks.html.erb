@@ -24,7 +24,7 @@
 						<% bookmark.tags.each do |t| %>
 							<%= tag.li(class: t.search_match? ? "matching" : nil) do
 								%><% if t.search_match? %><strong><% end
-								%><%= link_to_search_by_tags(t)
+								%><%= link_to_search_by_tags(@list, t)
 								%><% if t.search_match? %></strong><% end
 							end %>
 						<% end %>
