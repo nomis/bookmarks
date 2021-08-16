@@ -142,6 +142,7 @@ class BookmarksController < ApplicationController
 
     respond_to do |format|
       format.html do
+        return unless canonical_pagination(@list.pagination, tags: params[:tags])
         redirect_to root_path if @list.empty?
       end
       format.json { @bookmarks = @bookmarks.includes(:tags) }
