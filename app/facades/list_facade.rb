@@ -63,7 +63,7 @@ class ListFacade
 
   # Fake tag representing "no tags"
   def untags
-    @untags ||= untagged_count > 0 ? [UntaggedFacade.new(untagged_count, search_untagged?)] : []
+    @untags ||= @tags.present? && untagged_count > 0 ? [UntaggedFacade.new(untagged_count, search_untagged?)] : []
   end
 
   def self_path
