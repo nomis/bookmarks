@@ -111,4 +111,23 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "a[href=?]", search_untagged_path
   end
+
+  test "untagged link on the untagged page" do
+    b = Bookmark.first
+    b.tags_string = Tag.first.name
+    b.save!
+
+    b = Bookmark.second
+    b.tags_string = ""
+    b.save!
+
+    assert Bookmark.all.count > 0
+    assert Tag.all.count > 0
+    assert Tag.with_count.length > 0
+
+    get search_untagged_path
+    assert_response :success
+
+    assert_select "a[href=?]", root_path
+  end
 end
