@@ -2,12 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
-include BookmarksHelper
-include Pagy::Backend
-
 class ListFacade
-  include Rails.application.routes.url_helpers
-
   def initialize(params, bookmarks, tags, search_tags = Set.new, search_untagged = false, search_visibility = nil)
     @params = params
     @tags = tags.with_count.order(:key)
@@ -122,6 +117,11 @@ class ListFacade
   end
 
   private
+
+  include ActionView::Helpers::TextHelper
+  include BookmarksHelper
+  include Pagy::Backend
+  include Rails.application.routes.url_helpers
 
   attr_reader :params
 
