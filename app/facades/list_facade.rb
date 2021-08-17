@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
-include ActionView::Helpers::TextHelper
+include BookmarksHelper
 include Pagy::Backend
 
 class ListFacade
@@ -155,21 +155,7 @@ class ListFacade
   end
 
   def self_path
-    case type
-    when :tagged
-      search_by_tags_path(tags: search_tags_param, visibility: search_visibility?&.to_s)
-    when :untagged
-      search_untagged_path(visibility: search_visibility?&.to_s)
-    when :all
-      case search_visibility?
-      when :public
-        search_public_path
-      when :private
-        search_private_path
-      else
-        root_path
-      end
-    end
+    list_path(self)
   end
 
   def unpaginated_bookmarks

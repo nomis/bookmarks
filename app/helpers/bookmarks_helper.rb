@@ -44,6 +44,24 @@ module BookmarksHelper
     end
   end
 
+  def list_path(list)
+    case list.type
+    when :tagged
+      search_by_tags_path(tags: list.search_tags_param, visibility: list.search_visibility?&.to_s)
+    when :untagged
+      search_untagged_path(visibility: list.search_visibility?&.to_s)
+    when :all
+      case list.search_visibility?
+      when :public
+        search_public_path
+      when :private
+        search_private_path
+      else
+        root_path
+      end
+    end
+  end
+
   private
 
   def tag_search_href(list, tag)

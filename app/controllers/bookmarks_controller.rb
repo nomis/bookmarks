@@ -48,6 +48,18 @@ class BookmarksController < ApplicationController
     end
   end
 
+  # GET /incremental.json?page=...[&search_tags=...][&search_untagged=1][&search_visibility=...]
+  def incremental
+    checked_params = helpers.auto_params_context
+    return unless load_bookmarks(checked_params[:search_tags],
+      checked_params[:search_untagged],
+      checked_params[:search_visibility])
+
+    respond_to do |format|
+      format.json
+    end
+  end
+
   # GET /bookmarks/1
   # GET /bookmarks/1.json
   # GET /bookmarks/1.xml
@@ -139,18 +151,6 @@ class BookmarksController < ApplicationController
     respond_to do |format|
       format.html { redirect_to helpers.auto_root_path, notice: "Bookmark was successfully deleted." }
       format.json { head :no_content }
-    end
-  end
-
-  # GET /incremental.json?page=...[&search_tags=...][&search_untagged=1][&search_visibility=...]
-  def incremental
-    checked_params = helpers.auto_params_context
-    return unless load_bookmarks(checked_params[:search_tags],
-      checked_params[:search_untagged],
-      checked_params[:search_visibility])
-
-    respond_to do |format|
-      format.json
     end
   end
 
