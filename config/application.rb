@@ -70,7 +70,7 @@ module Bookmarks
     db_adapter = ActiveRecord::DatabaseConfigurations
       .new(Rails.application.config.database_configuration)
       .configs_for(env_name: Rails.env)[0].adapter
-    config.paths["db"] = "db/schema/#{db_adapter}"
+    config.paths["db"] = File.join("db", "schema", db_adapter)
 
     # Compress files with Brotli
     config.assets.configure do |env|
