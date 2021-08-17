@@ -1,6 +1,9 @@
 User-agent: *
 Disallow: /bookmarks
+Disallow: /incremental
 Disallow: /lookup
+Disallow: /private
+Disallow: /public
 Disallow: /rails
 Disallow: /tags
 Disallow: /untagged
