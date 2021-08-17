@@ -41,7 +41,7 @@ class BookmarksController < ApplicationController
       format.html do
         return unless canonical_pagination(@list.pagination, tags: params[:tags])
         return unless canonical_search(params[:tags])
-        redirect_to root_path if @list.empty?
+        redirect_to root_path if @list.empty? && request.path != root_path
       end
       format.json { @bookmarks = @bookmarks.includes(:tags) }
       format.xml { @bookmarks = @bookmarks.includes(:tags) }
