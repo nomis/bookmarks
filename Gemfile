@@ -30,6 +30,11 @@ gem 'bootsnap', '>= 1.4.4', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+
+  # Performance checking while developing
+  gem 'bullet'
+
+  gem 'rspec-rails'
 end
 
 group :development do
@@ -63,9 +68,6 @@ gem 'with_advisory_lock', '~> 4.6.0'
 gem 'natural_sort', '~> 0.3.0'
 gem 'addressable', '~> 2.8.0'
 gem 'concurrent-ruby', '~> 1.1.9'
-
-# Performance checking while developing
-gem 'bullet'
 
 # Authentication
 gem 'devise', '~> 4.8.0'
