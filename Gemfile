@@ -56,6 +56,7 @@ group :test do
   gem 'webdrivers'
 
   gem 'minitest-stub_any_instance'
+  gem 'factory_bot_rails'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
