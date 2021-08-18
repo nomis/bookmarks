@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# frozen_string_literal: true
+
 module LookupURITestHelper
   class ResponseStream
     def initialize(body)
@@ -5,7 +9,7 @@ module LookupURITestHelper
     end
 
     def readpartial
-      @chunks.shift
+      @chunks.shift.dup
     end
   end
 
