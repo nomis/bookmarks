@@ -86,6 +86,14 @@ RSpec.describe "Bookmarks#index", type: :feature do
         .merge(others)
     end
 
+    def text_or_h(value)
+      if value.respond_to?(:to_h)
+        value.to_h
+      else
+        {text: value}
+      end
+    end
+
     let(:first_page) do
       visit path.call(query)
       page
@@ -105,23 +113,15 @@ RSpec.describe "Bookmarks#index", type: :feature do
       end
 
       it "has a description heading" do
-        expect(first_page).to have_css("h1", text: description)
+        expect(first_page).to have_css("h1", text_or_h(description))
       end
 
       it "has a tags heading" do
-        if tags_heading.respond_to?(:to_h)
-          expect(first_page).to have_css("h2", tags_heading)
-        else
-          expect(first_page).to have_css("h2", text: tags_heading)
-        end
+        expect(first_page).to have_css("h2", text_or_h(tags_heading))
       end
 
       it "has a bookmarks heading" do
-        if bookmarks_heading.respond_to?(:to_h)
-          expect(first_page).to have_css("h2", bookmarks_heading)
-        else
-          expect(first_page).to have_css("h2", text: bookmarks_heading)
-        end
+        expect(first_page).to have_css("h2", text_or_h(bookmarks_heading))
       end
 
       it "has tag links" do
