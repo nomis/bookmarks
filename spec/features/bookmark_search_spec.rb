@@ -26,7 +26,10 @@ RSpec.describe "Bookmarks#index", type: :feature do
     # Fewer items per page so that there are more pages
     Pagy::VARS[:items] = 10
 
-    User.destroy_all
+    Bookmark.transaction do
+      User.destroy_all
+      remove_test_data
+    end
   end
 
   def user
@@ -34,8 +37,6 @@ RSpec.describe "Bookmarks#index", type: :feature do
   end
 
   def generate_test_data(with_tags: true, with_public: true, with_private: true, with_untagged: true)
-    remove_test_data
-
     tags_strings = []
     tags_strings << "" if with_untagged
     tags_strings += ["A", "B", "C", "A B", "B C"] if with_tags
@@ -44,26 +45,30 @@ RSpec.describe "Bookmarks#index", type: :feature do
     privates << false if with_public
     privates << true if with_private
 
-    n = 0
-    tags_strings.each do |tags_string|
-      privates.each do |private|
-        (1..25).each do |i|
-          b = Bookmark.create(
-            title: "Test #{tags_string} #{private ? "private" : "public"} #{i}",
-            uri: "https://#{n}.test/")
-          b.tags_string = tags_string
-          b.private = private
-          b.save!
+    Bookmark.transaction do
+      n = 0
+      tags_strings.each do |tags_string|
+        privates.each do |private|
+          (1..25).each do |i|
+            b = Bookmark.create(
+              title: "Test #{tags_string} #{private ? "private" : "public"} #{i}",
+              uri: "https://#{n}.test/")
+            b.tags_string = tags_string
+            b.private = private
+            b.save!
 
-          n += 1
+            n += 1
+          end
         end
       end
     end
   end
 
   def remove_test_data
-    Bookmark.destroy_all
-    Tag.destroy_all
+    Bookmark.transaction do
+      Bookmark.destroy_all
+      Tag.destroy_all
+    end
   end
 
   let(:a_id) { Tag.find_by(name: "A").id }
