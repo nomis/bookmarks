@@ -19,8 +19,7 @@ defaults: &defaults
 development:
   <<: *defaults
   base_url:
-    host: localhost
-    port: 3000
+    host: bookmarks.localhost
 
 test:
   <<: *defaults
