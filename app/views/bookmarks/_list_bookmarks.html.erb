@@ -1,5 +1,5 @@
 <%
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 %>
 <% @list.bookmarks.each do |bookmark| %>
@@ -12,7 +12,9 @@
 				end
 			rescue Addressable::URI::InvalidURIError
 			end
-			if bookmark.private?
+			if bookmark.secret?
+				%> <span title="Secret">🔐</span><%
+			elsif bookmark.private?
 				%> <span title="Private">🔒</span><%
 			end
 		%>

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
@@ -25,16 +25,20 @@ Rails.application.routes.draw do
     as: :search_private, constraints: {
       format: ["html", "json", "xml"],
     }, defaults: { visibility: "private" }
+  get "/secret", to: "bookmarks#index",
+    as: :search_secret, constraints: {
+      format: ["html", "json", "xml"],
+    }, defaults: { visibility: "secret" }
 
   get "(/:visibility)/tags/:tags", to: "bookmarks#index",
     as: :search_by_tags, constraints: {
       format: ["html", "json", "xml"],
-      visibility: ["public", "private"]
+      visibility: ["public", "private", "secret"]
     }
   get "(/:visibility)/untagged", to: "bookmarks#index",
     as: :search_untagged, constraints: {
       format: ["html", "json", "xml"],
-      visibility: ["public", "private"]
+      visibility: ["public", "private", "secret"]
     }, defaults: { untagged: true }
 
   get "/lookup/url", to: "lookup#url",

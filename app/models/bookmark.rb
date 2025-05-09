@@ -1,15 +1,27 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
 class Bookmark < ApplicationRecord
+  enum visibility: [:public, :private, :secret], _suffix: true
+
   BLOCKED_SCHEMES = Set.new(["file", "javascript"]).freeze
 
   MAX_TAGS = Rails.configuration.x.maximum_tags
 
   has_and_belongs_to_many :tags, join_table: :bookmark_tags
 
-  scope :for_user, ->(user_signed_in) { user_signed_in ? all : where(private: false) }
+  scope :for_user_all, ->(user) { for_user(user, nil, true) }
+
+  scope :for_user_hide_secret, ->(user, visibility) {
+    # Hide secret bookmarks by default
+    for_user(user, visibility, visibility == :secret)
+  }
+
+  scope :for_user_only_secret, ->(user, visibility) {
+    # Hidden secret bookmarks by default
+    visibility.nil? ? for_user(user, :secret, true) : none
+  }
 
   scope :with_tags, ->(tags) do
     tags.inject(self) do |query, tag|
@@ -56,7 +68,50 @@ class Bookmark < ApplicationRecord
     @new_tags = tags_string.split.map { |name| Tag.new(name: name) }.map { |tag| [tag.key, tag] }.to_h
   end
 
+  def private
+    self[:visibility] != "public"
+  end
+
+  def private=(value)
+    self[:visibility] = ActiveModel::Type::Boolean.new.cast(value) ? "private" : "public"
+  end
+
   private
+
+  scope :for_user, ->(user, visibility, with_secret) {
+    if user.nil?
+      if visibility.nil? || visibility == :public
+        where(visibility: :public)
+      else
+        none
+      end
+    else
+      case user.visibility.to_sym
+      when :secret
+        if visibility.nil?
+          with_secret ? all : where.not(visibility: :secret)
+        elsif [:public, :private, :secret].include?(visibility)
+          where(visibility: visibility)
+        else
+          none
+        end
+      when :private
+        if visibility.nil?
+          where.not(visibility: :secret)
+        elsif [:public, :private].include?(visibility)
+          where(visibility: visibility)
+        else
+          none
+        end
+      else # public
+        if visibility.nil? || visibility == :public
+          where(visibility: :public)
+        else
+          none
+        end
+      end
+    end
+  }
 
   def validate_uri
     begin

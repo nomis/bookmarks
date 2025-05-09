@@ -1,8 +1,10 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  enum visibility: [:public, :private, :secret], _suffix: true
+
   # Include default devise modules. Others available are:
   # :registerable and :omniauthable
   devise :database_authenticatable, :registerable,

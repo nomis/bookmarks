@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
@@ -7,7 +7,6 @@ class BookmarksController < ApplicationController
 
   before_action :set_bookmark, only: [:show, :edit, :update, :delete, :destroy]
   before_action :authenticate_user!, except: [:index, :show, :search_tagged, :search_untagged, :incremental, :compose]
-  before_action :check_access, only: [:show]
 
   # Not called if authenticate_user! is used
   after_action :delete_cookies
@@ -25,6 +24,9 @@ class BookmarksController < ApplicationController
   # GET /private/tags/1,2,3
   # GET /private/tags/1,2,3.json
   # GET /private/tags/1,2,3.xml
+  # GET /secret/tags/1,2,3
+  # GET /secret/tags/1,2,3.json
+  # GET /secret/tags/1,2,3.xml
   # GET /untagged
   # GET /untagged.json
   # GET /untagged.xml
@@ -34,6 +36,9 @@ class BookmarksController < ApplicationController
   # GET /private/untagged
   # GET /private/untagged.json
   # GET /private/untagged.xml
+  # GET /secret/untagged
+  # GET /secret/untagged.json
+  # GET /secret/untagged.xml
   def index
     return unless load_bookmarks(params[:tags], params[:untagged] == true, params[:visibility])
 
@@ -67,7 +72,7 @@ class BookmarksController < ApplicationController
     respond_to do |format|
       format.html do
         @bookmark = BookmarkFacade.new(@bookmark, Set.new) do |tags|
-          tags.for_user(user_signed_in?).with_count.order(:key)
+          tags.for_user_all(current_user).with_count.order(:key)
         end
       end
       format.json
@@ -88,7 +93,7 @@ class BookmarksController < ApplicationController
 
   # GET /bookmarks/compose_with_session
   def compose_with_session
-    bookmark = Bookmark.find_by(uri: params["uri"])
+    bookmark = Bookmark.for_user_all(current_user).find_by(uri: params["uri"])
     if bookmark
       redirect_to edit_bookmark_path(bookmark), notice: "Bookmark for \"#{params["title"]}\" already exists."
     else
@@ -158,16 +163,40 @@ class BookmarksController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_bookmark
-    @bookmark = Bookmark.find(params[:id])
-  end
+    authenticate_user! if !Bookmark.find(params[:id]).public_visibility?
 
-  def check_access
-    authenticate_user! if @bookmark.private?
+    @bookmark = Bookmark.for_user_all(current_user).find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
   def bookmark_params
-    params.require(:bookmark).permit(:title, :uri, :tags_string, :private)
+    trusted_params = params.require(:bookmark).permit(:title, :uri, :tags_string, :visibility, :private)
+
+    if trusted_params.include?(:visibility)
+      allowed = case current_user.visibility&.to_sym
+        when :secret
+          ["secret", "private", "public"]
+        when :private
+          ["private", "public"]
+        else # public
+          ["public"]
+        end
+
+      if !allowed.include?(trusted_params[:visibility])
+        trusted_params.merge!({ :visibility => allowed[0] })
+      end
+
+      trusted_params.extract!(:private)
+    elsif trusted_params.include?(:private)
+      case current_user.visibility&.to_sym
+      when :secret, :private
+        nil
+      else # public
+        trusted_params.extract!(:private)
+      end
+    end
+
+    trusted_params
   end
 
   # Load bookmarks for index, search or incremental output
@@ -176,38 +205,39 @@ class BookmarksController < ApplicationController
       render(status: :bad_request)
       return false
     elsif !visibility.nil?
-      if !["public", "private"].include?(visibility)
+      if !["public", "private", "secret"].include?(visibility)
         render(status: :bad_request)
         return false
       else
         # Only users are allowed to search by visibility
         authenticate_user!
+
+        visibility = visibility&.to_sym
       end
     end
 
     filter_tags = tags_param ? Set.new(tags_param.split(",").map(&:to_i)) : Set.new()
 
-    @bookmarks = Bookmark.for_user(user_signed_in?)
-    tags = Tag.for_user(user_signed_in?)
-
-    if visibility.present?
-      @bookmarks = @bookmarks.where(private: visibility == "private")
-      tags = tags.joins(:bookmarks).merge(Bookmark.where(private: visibility == "private"))
-    end
+    @bookmarks = Bookmark.for_user_hide_secret(current_user, visibility)
+    secret_bookmarks = Bookmark.for_user_only_secret(current_user, visibility)
+    tags = Tag.for_user_hide_secret(current_user, visibility)
 
     if !filter_tags.empty?
       validate_search(filter_tags)
 
       @bookmarks = @bookmarks.with_tags(filter_tags)
+      secret_bookmarks = secret_bookmarks.with_tags(filter_tags)
       tags = tags.common_tags(filter_tags)
     end
 
     if untagged_only
       @bookmarks = @bookmarks.without_tags
+      secret_bookmarks = secret_bookmarks.without_tags
       tags = tags.none
     end
 
-    @list = ListFacade.new(params, @bookmarks, tags, filter_tags, untagged_only, visibility&.to_sym)
+    @list = ListFacade.new(params, @bookmarks, tags, filter_tags,
+      untagged_only, visibility, secret_bookmarks.count)
     true
   end
 

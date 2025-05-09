@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_09_185323) do
+ActiveRecord::Schema.define(version: 2025_05_03_163511) do
 
   create_table "bookmark_tags", id: false, force: :cascade do |t|
     t.integer "bookmark_id", null: false
@@ -26,9 +26,12 @@ ActiveRecord::Schema.define(version: 2021_08_09_185323) do
     t.text "uri", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "private", default: false, null: false
-    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id", order: { created_at: :desc }
-    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id_where_public", order: { created_at: :desc }, where: "\"private\" = 0"
+    t.integer "visibility", default: 0, null: false
+    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id"
+    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id_where_not_secret", order: { created_at: :desc }, where: "\"visibility\" != 2"
+    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id_where_private", order: { created_at: :desc }, where: "\"visibility\" = 1"
+    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id_where_public", order: { created_at: :desc }, where: "\"visibility\" = 0"
+    t.index ["created_at", "id"], name: "index_bookmarks_on_created_at_and_id_where_secret", order: { created_at: :desc }, where: "\"visibility\" = 2"
     t.index ["uri"], name: "index_bookmarks_on_uri", unique: true
   end
 
@@ -62,6 +65,7 @@ ActiveRecord::Schema.define(version: 2021_08_09_185323) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "session_token"
+    t.integer "visibility", default: 0, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

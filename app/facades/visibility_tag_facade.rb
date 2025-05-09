@@ -1,9 +1,11 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
 # Fake tag representing visibility
 class VisibilityTagFacade
+  include BookmarksHelper
+
   def initialize(type, count, search_match)
     @type = type
     @count = count
@@ -11,12 +13,7 @@ class VisibilityTagFacade
   end
 
   def name
-    case @type
-    when :public
-      "🔓"
-    when :private
-      "🔒"
-    end
+    @name ||= visibility_icon(@type)
   end
 
   def count

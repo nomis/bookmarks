@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
@@ -25,7 +25,7 @@ module BookmarksHelper
     {
       search_tags: params[:search_tags],
       search_untagged: params[:search_untagged].to_i == 1 ? 1 : nil,
-      search_visibility: ["public", "private"].include?(params[:search_visibility]) ? params[:search_visibility] : nil,
+      search_visibility: ["public", "private", "secret"].include?(params[:search_visibility]) ? params[:search_visibility] : nil,
     }.merge(others)
   end
 
@@ -39,6 +39,8 @@ module BookmarksHelper
       search_public_path
     elsif context[:search_visibility] == "private"
       search_private_path
+    elsif context[:search_visibility] == "secret"
+      search_secret_path
     else
       root_path
     end
@@ -56,9 +58,22 @@ module BookmarksHelper
         search_public_path
       when :private
         search_private_path
+      when :secret
+        search_secret_path
       else
         root_path
       end
+    end
+  end
+
+  def visibility_icon(visibility)
+    case visibility
+    when :public
+      "🔓"
+    when :private
+      "🔒"
+    when :secret
+      "🔑"
     end
   end
 
@@ -72,12 +87,14 @@ module BookmarksHelper
         search_public_path
       when :private
         search_private_path
+      when :secret
+        search_secret_path
       else
         root_path
       end
     when :untagged
       search_untagged_path(visibility: list&.search_visibility?&.to_s)
-    when :public, :private, :any_visibility
+    when :public, :private, :secret, :any_visibility
       visibility = tag.search_toggle_type == :any_visibility ? nil : tag.search_toggle_type.to_s
 
       case list&.type
@@ -91,6 +108,8 @@ module BookmarksHelper
           search_public_path
         when :private
           search_private_path
+        when :secret
+          search_secret_path
         when :any_visibility
           root_path
         end
@@ -120,9 +139,16 @@ module BookmarksHelper
           "Include private bookmarks"
         when :private
           "Include public bookmarks"
+        when :secret
+          "Public/private bookmarks only"
         end
       else
-        "All bookmarks"
+        case list.search_visibility?
+        when :secret
+          "Public/private bookmarks only"
+        else
+          "All bookmarks"
+        end
       end
     when :untagged
       "Untagged bookmarks"
@@ -130,6 +156,8 @@ module BookmarksHelper
       "Public bookmarks only"
     when :private
       "Private bookmarks only"
+    when :secret
+      "Secret bookmarks only"
     end
   end
 

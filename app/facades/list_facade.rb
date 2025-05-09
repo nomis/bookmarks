@@ -1,9 +1,10 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
 class ListFacade
-  def initialize(params, bookmarks, tags, search_tags = Set.new, search_untagged = false, search_visibility = nil)
+  def initialize(params, bookmarks, tags, search_tags,
+      search_untagged, search_visibility, secret_count)
     @params = params
     @tags = tags.with_count.order(:key)
     # TODO: This should join the tags table when querying bookmark_tags, but it doesn't ☹️
@@ -11,6 +12,7 @@ class ListFacade
     @search_tags = search_tags
     @search_untagged = search_untagged
     @search_visibility = search_visibility
+    @secret_count = secret_count
   end
 
   def bookmarks
@@ -91,11 +93,19 @@ class ListFacade
   end
 
   def public_count
-    @bookmarks.where(private: false).count
+    @bookmarks.where(visibility: :public).count
   end
 
   def private_count
-    @bookmarks.where(private: true).count
+    @bookmarks.where(visibility: :private).count
+  end
+
+  def secret_count
+    if search_visibility? == :secret
+      @bookmarks.where(visibility: :secret).count
+    else
+      @secret_count
+    end
   end
 
   def empty?
@@ -130,7 +140,7 @@ class ListFacade
   end
 
   def fake_tags
-    untags + public_tags + private_tags
+    untags + public_tags + private_tags + secret_tags
   end
 
   # Fake tag representing public visibility
@@ -143,8 +153,15 @@ class ListFacade
   # Fake tag representing private visibility
   def private_tags
     @private_tags ||= (
-      search_visibility? == :private || (public_count > 0 && private_count > 0)
+      search_visibility? == :private || (private_count > 0 && public_count > 0)
     ) ? [VisibilityTagFacade.new(:private, private_count, search_visibility? == :private)] : []
+  end
+
+  # Fake tag representing secret visibility (secret bookmarks not shown unless filtered for)
+  def secret_tags
+    @secret_tags ||= (
+      search_visibility? == :secret || secret_count > 0
+    ) ? [VisibilityTagFacade.new(:secret, secret_count, search_visibility? == :secret)] : []
   end
 
   # Fake tag representing "no tags"

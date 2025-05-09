@@ -1,5 +1,5 @@
 <%
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 %>
 <%= form_with(model: bookmark, class: "wide") do |form| %>
@@ -32,10 +32,29 @@
 		<%= form.text_field :tags_string, autocomplete: "off" %>
 	</p>
 
-	<p class="field inline">
+	<% case current_user.visibility.to_sym %>
+	<% when :private %>
 		<%= form.label :private, Bookmark.human_attribute_name(:private) + ":" %>
 		<%= form.check_box :private, autocomplete: "off" %>
-	</p>
+	<% when :secret %>
+		<p class="field inline">
+			<%= Bookmark.human_attribute_name(:visibility) + ":" %>
+			<ul class="field">
+				<li>
+					<%= form.radio_button :visibility, "public" %>
+					<%= form.label :visibility_public, visibility_icon(:public) + " " + Bookmark.human_attribute_name(:public) %>
+				</li>
+				<li>
+					<%= form.radio_button :visibility, "private" %>
+					<%= form.label :visibility_private, visibility_icon(:private) + " " + Bookmark.human_attribute_name(:private) %>
+				</li>
+				<li>
+					<%= form.radio_button :visibility, "secret" %>
+					<%= form.label :visibility_secret, visibility_icon(:secret) + " " + Bookmark.human_attribute_name(:secret) %>
+				</li>
+			</ul>
+		</p>
+	<% end %>
 
 	<% auto_params_context.each do |key, value| %>
 		<% if value.present? %>

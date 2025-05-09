@@ -13,3 +13,21 @@ two:
  username: two
  email: two@example.com
  confirmed_at: <%= Time.now %>
+
+public_user:
+ username: public
+ email: public@example.com
+ confirmed_at: <%= Time.now %>
+ visibility: public
+
+private_user:
+ username: private
+ email: private@example.com
+ confirmed_at: <%= Time.now %>
+ visibility: private
+
+secret_user:
+ username: secret
+ email: secret@example.com
+ confirmed_at: <%= Time.now %>
+ visibility: secret

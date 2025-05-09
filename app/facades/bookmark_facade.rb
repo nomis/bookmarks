@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # frozen_string_literal: true
 
@@ -31,8 +31,16 @@ class BookmarkFacade
     @tag_facades ||= @tags.sort_by(&:key).map { |tag| TagFacade.new(tag, @search_tags) }
   end
 
+  def public?
+    @public ||= @bookmark.public_visibility?
+  end
+
   def private?
-    @private ||= @bookmark.private
+    @private ||= @bookmark.private_visibility?
+  end
+
+  def secret?
+    @secret ||= @bookmark.secret_visibility?
   end
 
   def created_at

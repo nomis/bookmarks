@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 user = user_signed_in?
@@ -26,11 +26,7 @@ xml.xbel(version: "1.0".freeze,
 						end
 					end
 					if user
-						if bookmark.private?
-							xml.tag!("a:private".freeze)
-						else
-							xml.tag!("a:public".freeze)
-						end
+						xml.tag!("a:visibility".freeze, bookmark.visibility)
 					end
 				end
 			end

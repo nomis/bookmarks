@@ -1,5 +1,5 @@
 <%
-# SPDX-FileCopyrightText: 2021 Simon Arlott
+# SPDX-FileCopyrightText: 2021,2025 Simon Arlott
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 content_for :title, "#" + @bookmark.id.to_s
@@ -27,12 +27,18 @@ content_for :robots, "noindex"
 		</dd>
 	<% end %>
 	<% if user_signed_in? %>
-		<% if @bookmark.private? %>
-			<dt class="private"><%= Bookmark.human_attribute_name(:private) %></dt>
-			<dd class="private">🔒</dd>
-		<% else %>
-			<dt class="private"><%= Bookmark.human_attribute_name(:public) %></dt>
-			<dd class="private">🔓</dd>
+		<% case current_user.visibility.to_sym %>
+		<% when :secret, :private %>
+			<% if @bookmark.secret? %>
+				<dt class="visibility"><%= Bookmark.human_attribute_name(:secret) %></dt>
+				<dd class="visibility"><%= visibility_icon(:secret) %></dd>
+			<% elsif @bookmark.private? %>
+				<dt class="private"><%= Bookmark.human_attribute_name(:private) %></dt>
+				<dd class="visibility"><%= visibility_icon(:private) %></dd>
+			<% else %>
+				<dt class="private"><%= Bookmark.human_attribute_name(:public) %></dt>
+				<dd class="visibility"><%= visibility_icon(:public) %></dd>
+			<% end %>
 		<% end %>
 	<% end %>
 </dl>
