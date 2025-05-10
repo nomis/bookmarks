@@ -6,7 +6,7 @@ ruby '>= 2.5.1'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1.0'
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3', '~> 1.4'
+gem 'sqlite3', '~> 1.6.9'
 gem 'pg', '~> 1.2.3'
 # Use Puma as the app server
 gem 'puma', '~> 5.0'
@@ -78,7 +78,7 @@ gem 'pagy', '~> 4.10.1'
 
 # HTTP client/parser
 gem 'http', '~> 4.4.1'
-gem 'nokogiri', '~> 1.11.1'
+gem 'nokogiri', '~> 1.15.7'
 
 # Improve XML escaping performance
 gem 'fast_xs', '~> 0.8.0'

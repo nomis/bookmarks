@@ -46,7 +46,7 @@ Created to learn Ruby on Rails and host my own del.icio.us alternative.
 
 ## Copyright
 
-    Copyright 2021  Simon Arlott
+    Copyright 2021-2025  Simon Arlott
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
