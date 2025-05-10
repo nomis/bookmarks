@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 user = user_signed_in?
+owner = URI.join(request.original_url, "/").to_s
 
 xml.instruct!("xml".freeze, version: "1.0".freeze, encoding: "UTF-8".freeze)
 xml.declare!(:DOCTYPE, :xbel, :PUBLIC,
@@ -17,7 +18,7 @@ xml.xbel(version: "1.0".freeze,
 				modified: bookmark.updated_at.iso8601) do
 			xml.title(bookmark.title)
 			xml.info do
-				xml.metadata(owner: "urn:oid:1.3.6.1.4.1.39777.1.2.1.1".freeze) do
+				xml.metadata(owner: owner) do
 					bookmark.tags.each do |tag|
 						xml.tag!("a:tag".freeze, id: "tag_#{tag.id}",
 								added: tag.created_at.iso8601,
