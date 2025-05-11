@@ -12,10 +12,8 @@
 				end
 			rescue Addressable::URI::InvalidURIError
 			end
-			if bookmark.secret?
-				%> <span title="Secret">🔐</span><%
-			elsif bookmark.private?
-				%> <span title="Private">🔒</span><%
+			if bookmark.private?
+				%> <span title="<%= Bookmark.human_attribute_name(:private) %>"><%= visibility_icon(:private) %></span><%
 			end
 		%>
 		<dl>
