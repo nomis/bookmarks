@@ -56,7 +56,7 @@ group :test do
   gem 'webdrivers'
 
   gem 'minitest-stub_any_instance'
-  gem 'factory_bot_rails'
+  gem 'factory_bot_rails', '~> 6.2.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -85,3 +85,6 @@ gem 'fast_xs', '~> 0.8.0'
 
 # Compress .css with Brotli
 gem 'sprockets-exporters_pack', '~> 0.1.2'
+
+# https://github.com/ruby/net-imap/issues/16#issuecomment-803086765
+gem 'mail', '2.7.1'
