@@ -1,0 +1,102 @@
+/*
+Copyright 2025  Simon Arlott
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+@Library("uuid")
+import uk.uuid.jenkins.pipeline.Cron
+import uk.uuid.jenkins.pipeline.Email
+
+pipeline {
+	agent {
+		dockerfile {
+			label "Linux && Docker"
+			dir ".uuid-uk"
+			filename "Dockerfile"
+			args "--mount source=user-cache-debian-bullseye-bundle,target=/home/user/.bundle/cache --mount source=user-cache-debian-bullseye-yarn,target=/home/user/.cache/yarn"
+		}
+	}
+	triggers {
+		cron("${Cron.schedule(this)}")
+	}
+	options {
+		disableConcurrentBuilds()
+	}
+	environment {
+		RAILS_ENV = "test"
+		RAILS_LOG_LEVEL = "warn"
+		RAILS_SERVE_STATIC_FILES = "1"
+		TMPDIR = "${WORKSPACE_TMP}"
+		YARN_ENABLE_IMMUTABLE_INSTALLS = "false"
+	}
+	stages {
+		stage("Checkout") {
+			steps {
+				sh "git clean -fdx"
+				sh "git fetch --tags"
+			}
+		}
+		stage("Prepare") {
+			steps {
+				sh "ruby --version"
+				sh "bundle --version"
+				sh "bundle config set --local path vendor/bundle"
+				sh "bundle config set --local cache_all true"
+				sh "bundle config set --local cache_path /home/user/.bundle/cache"
+				// https://github.com/brianmario/fast_xs/issues/8
+				// https://github.com/brianmario/fast_xs/pull/9
+				sh "bundle config build.fast_xs --with-cflags=\\\"-Wno-incompatible-pointer-types\\\""
+				sh "yarnpkg --version"
+			}
+		}
+		stage("Dependencies") {
+			steps {
+				sh "bundle install --verbose"
+				sh "yarnpkg install"
+			}
+		}
+		stage("Build") {
+			steps {
+				sh "cp config/database.yml.sample config/database.yml"
+				sh "cp config/bookmarks.yml.sample config/bookmarks.yml"
+				sh "bundle exec rails setup:config"
+				sh "EDITOR=true bundle exec rails credentials:edit"
+				sh "bundle exec rails db:prepare"
+				sh "bundle exec rails assets:precompile"
+			}
+		}
+		stage("Test") {
+			steps {
+				sh "bundle exec rails test"
+				sh "bundle exec rails spec"
+			}
+		}
+		stage("Rollback") {
+			steps {
+				sh "bundle exec rails db:rollback STEP=1000000"
+			}
+		}
+	}
+	post {
+		cleanup {
+			cleanWs()
+		}
+		always {
+			script {
+				Email.send(this)
+			}
+		}
+	}
+}
