@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '>= 2.5.1'
+ruby '>= 2.7.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1.0'
@@ -88,3 +88,10 @@ gem 'sprockets-exporters_pack', '~> 0.1.2'
 
 # https://github.com/ruby/net-imap/issues/16#issuecomment-803086765
 gem 'mail', '2.7.1'
+
+# https://github.com/mikel/mail/pull/1472
+if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.1")
+  gem 'net-imap', require: false
+  gem 'net-pop', require: false
+  gem 'net-smtp', require: false
+end

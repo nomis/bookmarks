@@ -17,6 +17,10 @@ require "active_job/railtie"
 require "rails/test_unit/railtie"
 require "sprockets/railtie"
 
+require "rubygems"
+require "ostruct"
+require "yaml"
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -82,7 +86,11 @@ module Bookmarks
     bm_def = YAML.load_file(Rails.root.join("config", "defaults", "bookmarks.yml"))
     cfg_file = Rails.root.join("config", "bookmarks.yml")
     cfg_file = Rails.root.join("config", "bookmarks.yml.sample") if !cfg_file.exist?
-    bm_cfg = YAML.load_file(cfg_file)[Rails.env]
+    if Gem::Version.new(Psych::VERSION) >= Gem::Version.new("4")
+      bm_cfg = YAML.load_file(cfg_file, aliases: true)[Rails.env]
+    else
+      bm_cfg = YAML.load_file(cfg_file)[Rails.env]
+    end
     config.x = OpenStruct.new(bm_def.deep_merge(bm_cfg))
 
     if config.x.source_code_name.blank? || config.x.source_code_url.blank?
