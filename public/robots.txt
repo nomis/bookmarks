@@ -5,6 +5,7 @@ Disallow: /lookup
 Disallow: /private
 Disallow: /public
 Disallow: /rails
+Disallow: /secret
 Disallow: /tags
 Disallow: /untagged
 Disallow: /users
